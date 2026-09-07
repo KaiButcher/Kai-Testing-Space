@@ -1,137 +1,69 @@
-import React, { useState, useMemo } from 'react';
-import { Navbar } from './components/Navbar';
-import { HeroBento } from './components/HeroBento';
-import { BentoProjectCard } from './components/BentoProjectCard';
+import React, { useState } from 'react';
+import { KaiSpaceSquare } from './components/KaiSpaceSquare';
+import { ProjectTwoThirds } from './components/ProjectTwoThirds';
+import { PhotographySquare } from './components/PhotographySquare';
+import { GraphicSquare } from './components/GraphicSquare';
 import { ProjectDetailModal } from './components/ProjectDetailModal';
 import { ContactModal } from './components/ContactModal';
 import { GitHubModal } from './components/GitHubModal';
 import { PROJECTS_DATA } from './data/projects';
-import { ProjectItem, CategoryFilter } from './types';
-import { Sparkles, Layers, ArrowUpRight, Github, Mail, Globe, Heart } from 'lucide-react';
+import { ProjectItem } from './types';
 
 export default function App() {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All');
+  // Projects displayed across the three 2/3 spaces
+  const [projectRow1, setProjectRow1] = useState<ProjectItem>(PROJECTS_DATA[0]); // Aether Spatial OS
+  const [projectRow2, setProjectRow2] = useState<ProjectItem>(PROJECTS_DATA[1]); // Luminary Typography
+  const [projectRow3, setProjectRow3] = useState<ProjectItem>(PROJECTS_DATA[2]); // Monolith Keymapper
+
+  // Modals
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const [isContactOpen, setIsContactOpen] = useState<boolean>(false);
   const [isGitHubOpen, setIsGitHubOpen] = useState<boolean>(false);
 
-  // Filter 5 projects based on active pill
-  const filteredProjects = useMemo(() => {
-    if (selectedCategory === 'All') return PROJECTS_DATA;
-    return PROJECTS_DATA.filter((p) => p.category === selectedCategory);
-  }, [selectedCategory]);
-
-  const handleScrollToProjects = () => {
-    document.getElementById('projects-grid')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
-    <div className="min-h-screen bg-[#0b0d13] text-gray-100 bg-grid-pattern relative flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
-      {/* Top Navbar */}
-      <Navbar
-        currentFilter={selectedCategory}
-        onSelectFilter={setSelectedCategory}
-        onOpenContact={() => setIsContactOpen(true)}
-        onOpenGitHub={() => setIsGitHubOpen(true)}
-        totalProjects={PROJECTS_DATA.length}
-      />
+    <div className="w-full min-h-screen lg:h-screen lg:overflow-hidden bg-[#17181c] text-white selection:bg-white selection:text-black">
+      {/* 
+        3x3 Frame-filling Bento Grid with 1px white stroke division and zero padding
+      */}
+      <main className="w-full h-full min-h-screen lg:h-screen grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-3 gap-[1px] bg-white border border-white p-0 m-0">
+        {/* ROW 1: [1x1 Kai's Space] + [2/3 Project 01] */}
+        <KaiSpaceSquare
+          onOpenContact={() => setIsContactOpen(true)}
+          onOpenGitHub={() => setIsGitHubOpen(true)}
+        />
 
-      {/* Main Bento Canvas */}
-      <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 pb-16">
-        {/* Hero Bento Section */}
-        <HeroBento onScrollToProjects={handleScrollToProjects} />
+        <ProjectTwoThirds
+          project={projectRow1}
+          indexNumber="01"
+          onSelect={(p) => setSelectedProject(p)}
+          allProjects={PROJECTS_DATA}
+          onSwitchProject={(p) => setProjectRow1(p)}
+        />
 
-        {/* 5 Projects Bento Grid Section */}
-        <section id="projects-grid" className="pt-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse" />
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                Featured Projects
-              </h2>
-              <span className="text-xs font-mono text-gray-500">
-                ({filteredProjects.length} of 5 shown)
-              </span>
-            </div>
+        {/* ROW 2: [2/3 Project 02] + [1x1 Photography Hero] */}
+        <ProjectTwoThirds
+          project={projectRow2}
+          indexNumber="02"
+          onSelect={(p) => setSelectedProject(p)}
+          allProjects={PROJECTS_DATA}
+          onSwitchProject={(p) => setProjectRow2(p)}
+        />
 
-            <span className="text-xs font-mono text-gray-400 hidden sm:inline">
-              Spotlight cursor tracker &bull; Click to expand
-            </span>
-          </div>
+        <PhotographySquare />
 
-          {/* Asymmetrical Bento Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {filteredProjects.map((project, idx) => (
-              <BentoProjectCard
-                key={project.id}
-                project={project}
-                index={idx}
-                onSelect={(proj) => setSelectedProject(proj)}
-              />
-            ))}
-          </div>
+        {/* ROW 3: [1x1 Image/Graphic] + [2/3 Project 03] */}
+        <GraphicSquare />
 
-          {/* Bottom Bento Banner / Metric Strip */}
-          <div className="mt-6 bento-card rounded-3xl p-6 sm:p-7 border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center space-x-3 text-center sm:text-left">
-              <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-white">
-                  Custom interactive prototypes built for each project
-                </p>
-                <p className="text-xs text-gray-400">
-                  Click any project card above to test live simulations, inspect technical decisions, and view metrics.
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setIsContactOpen(true)}
-              className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-mono text-indigo-300 border border-white/10 transition-colors whitespace-nowrap cursor-pointer"
-            >
-              Request Custom Case Study &rarr;
-            </button>
-          </div>
-        </section>
+        <ProjectTwoThirds
+          project={projectRow3}
+          indexNumber="03"
+          onSelect={(p) => setSelectedProject(p)}
+          allProjects={PROJECTS_DATA}
+          onSwitchProject={(p) => setProjectRow3(p)}
+        />
       </main>
 
-      {/* Bento Footer */}
-      <footer className="w-full border-t border-white/5 bg-[#0e1017]/80 backdrop-blur-md py-8 text-xs text-gray-400">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
-          <div className="flex items-center space-x-2">
-            <span className="text-white font-semibold">Kai Butcher</span>
-            <span>&bull;</span>
-            <span>Bento Design Portfolio</span>
-            <span>&bull;</span>
-            <span>2026</span>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setIsGitHubOpen(true)}
-              className="hover:text-white transition-colors cursor-pointer flex items-center space-x-1"
-            >
-              <Github className="w-3.5 h-3.5" />
-              <span>GitHub</span>
-            </button>
-            <button
-              onClick={() => setIsContactOpen(true)}
-              className="hover:text-white transition-colors cursor-pointer flex items-center space-x-1"
-            >
-              <Mail className="w-3.5 h-3.5" />
-              <span>Contact</span>
-            </button>
-            <span className="text-emerald-400 flex items-center space-x-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>All Systems Operational</span>
-            </span>
-          </div>
-        </div>
-      </footer>
-
-      {/* Project Case Study Detail Modal */}
+      {/* Project Deep-Dive & Simulation Modal */}
       <ProjectDetailModal
         project={selectedProject}
         onClose={() => setSelectedProject(null)}
@@ -143,7 +75,7 @@ export default function App() {
         onClose={() => setIsContactOpen(false)}
       />
 
-      {/* GitHub Sync & Pages Workflow Guide Modal */}
+      {/* GitHub Deployment & Repository Modal */}
       <GitHubModal
         isOpen={isGitHubOpen}
         onClose={() => setIsGitHubOpen(false)}

@@ -1,6 +1,6 @@
 {
-  "name": "Kai's Mind",
-  "description": "Digital garden and lab portfolio showcasing interactive prototypes, sandbox tools, and creative coding concepts.",
+  "name": "Kai's Space",
+  "description": "Portfolio and digital workspace for Kai Butcher showcasing projects and photography in a 3x3 bento grid.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
