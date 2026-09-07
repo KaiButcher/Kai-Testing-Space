@@ -1,67 +1,108 @@
-import React from 'react';
-import { Sparkles, ArrowDown } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ArrowDownRight, Terminal, Clock, Sparkles, Layers, Cpu } from 'lucide-react';
 
 interface HeroBentoProps {
-  onTriggerPulse: () => void;
-  interactionCount: number;
-  onExploreScroll: () => void;
+  onScrollToProjects: () => void;
 }
 
-export const HeroBento: React.FC<HeroBentoProps> = ({
-  onTriggerPulse,
-  interactionCount,
-  onExploreScroll,
-}) => {
+export const HeroBento: React.FC<HeroBentoProps> = ({ onScrollToProjects }) => {
+  const [time, setTime] = useState<string>('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTime(
+        now.toLocaleTimeString('en-US', {
+          timeZone: 'Europe/London',
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        })
+      );
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="bento-card md:col-span-2 rounded-3xl p-8 flex flex-col justify-between border border-gray-800 relative overflow-hidden group shadow-xl">
-      {/* Ambient background glow */}
-      <div className="absolute -right-16 -top-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-all duration-500 pointer-events-none" />
+    <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 pt-2 pb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Large Statement Bento Card (2 columns) */}
+        <div className="md:col-span-2 bento-card rounded-3xl p-6 sm:p-8 border border-white/5 relative overflow-hidden flex flex-col justify-between group">
+          {/* Subtle Ambient Glow */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div>
-        <div className="flex items-center space-x-2">
-          <span className="text-xs font-semibold tracking-wider text-indigo-400 uppercase">Welcome</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/60" />
-          <span className="text-[11px] text-gray-500 font-mono">Kai Butcher Design</span>
+          <div>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-indigo-300 mb-5">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Selected Works &bull; 5 Interactive Case Studies</span>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.15] mb-4">
+              Crafting spatial interfaces, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">creative tools</span>, &amp; audio systems.
+            </h2>
+
+            <p className="text-gray-400 text-sm sm:text-base max-w-xl leading-relaxed">
+              Synthesizing tactile graphic design, WebGL motion choreography, and high-performance frontend architecture. Explore the 5 highlighted systems below.
+            </p>
+          </div>
+
+          <div className="pt-6 mt-6 border-t border-white/5 flex flex-wrap items-center justify-between gap-4">
+            <button
+              onClick={onScrollToProjects}
+              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-white text-black font-semibold text-xs hover:bg-gray-200 transition-all cursor-pointer shadow-lg shadow-white/10"
+            >
+              <span>Explore Projects (05)</span>
+              <ArrowDownRight className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center space-x-4 text-xs font-mono text-gray-500">
+              <span>BENTO SPEC V2.4</span>
+              <span>&bull;</span>
+              <span>LONDON / UTC+1</span>
+            </div>
+          </div>
         </div>
-        
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white mt-2 mb-4 leading-tight">
-          Exploring concepts, tools, &amp; interactive ideas.
-        </h1>
-        
-        <p className="text-gray-400 max-w-xl text-sm md:text-base leading-relaxed">
-          A minimal digital workspace sandbox. A collection of experimental app ideas, prototypes, and creative coding fragments built on the fly.
-        </p>
+
+        {/* Right Column Bento Stack */}
+        <div className="flex flex-col gap-4">
+          {/* Time & Location Card */}
+          <div className="bento-card rounded-3xl p-5 sm:p-6 border border-white/5 flex flex-col justify-between flex-1">
+            <div className="flex items-center justify-between text-xs font-mono text-gray-400 mb-2">
+              <span className="flex items-center space-x-1.5">
+                <Clock className="w-3.5 h-3.5 text-indigo-400" />
+                <span>London, UK</span>
+              </span>
+              <span className="text-emerald-400 font-semibold">{time || '12:00:00'}</span>
+            </div>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Available for contract engineering, product advisory, and creative technology collaborations.
+            </p>
+          </div>
+
+          {/* Tech Stack Matrix Card */}
+          <div className="bento-card rounded-3xl p-5 sm:p-6 border border-white/5 flex-1">
+            <div className="flex items-center space-x-2 text-xs font-mono text-gray-400 mb-3">
+              <Cpu className="w-3.5 h-3.5 text-purple-400" />
+              <span>Core Tooling &amp; Stack</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5 text-[11px] font-mono">
+              {['React 19', 'TypeScript', 'GSAP / Motion', 'WebGL', 'Tailwind', 'Web Audio', 'Figma'].map(
+                (tool) => (
+                  <span
+                    key={tool}
+                    className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/5 text-gray-300"
+                  >
+                    {tool}
+                  </span>
+                )
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div className="flex flex-wrap items-center gap-4 mt-8 pt-2">
-        <button
-          id="explore-ideas-btn"
-          onClick={() => {
-            onTriggerPulse();
-            onExploreScroll();
-          }}
-          className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-sm font-medium transition-all shadow-lg shadow-indigo-600/25 flex items-center space-x-2 cursor-pointer"
-        >
-          <span>Explore Ideas</span>
-          <ArrowDown className="w-4 h-4 opacity-80 group-hover:translate-y-0.5 transition-transform" />
-        </button>
-
-        <button
-          id="pulse-ping-btn"
-          onClick={onTriggerPulse}
-          className="px-4 py-2 rounded-xl bg-gray-800/80 hover:bg-gray-700/80 active:scale-95 text-gray-300 hover:text-white text-xs font-medium border border-gray-700/60 transition-all flex items-center space-x-1.5 cursor-pointer"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Ping Sandbox</span>
-        </button>
-
-        <span
-          id="interaction-counter"
-          className="text-xs text-gray-400 font-mono py-1 px-2.5 rounded-md bg-gray-900/60 border border-gray-800"
-        >
-          Interactions: {interactionCount}
-        </span>
-      </div>
-    </div>
+    </section>
   );
 };
