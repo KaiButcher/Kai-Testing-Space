@@ -59,6 +59,26 @@ export const GitHubModal: React.FC<GitHubModalProps> = ({ isOpen, onClose }) => 
             </div>
           </div>
 
+          {/* Blank Screen Alert & Solution */}
+          <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/40 space-y-2">
+            <div className="flex items-center space-x-2 text-amber-400 font-semibold text-xs">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+              <span>Fixing Blank Screen on kaibutcher.github.io/Kai-Testing-Space/</span>
+            </div>
+            <p className="text-gray-300 text-xs leading-relaxed">
+              <strong>Why did it show a blank screen?</strong> GitHub Pages was configured to serve the uncompiled source branch directly (where <code className="text-amber-200">index.html</code> points to raw TypeScript <code className="text-amber-200">/src/main.tsx</code>), rather than the compiled production build.
+            </p>
+            <div className="p-3 rounded-xl bg-black/50 border border-amber-500/20 text-xs space-y-1.5 text-gray-300">
+              <p className="font-semibold text-white">How to fix in 30 seconds:</p>
+              <ol className="list-decimal list-inside space-y-1 text-gray-300">
+                <li>Go to your repository: <strong className="text-indigo-300">github.com/KaiButcher/Kai-Testing-Space</strong></li>
+                <li>Click <strong>Settings</strong> &rarr; <strong>Pages</strong> (in left sidebar)</li>
+                <li>Under <strong>Build and deployment &rarr; Source</strong>, change the dropdown from <em>&quot;Deploy from a branch&quot;</em> to <strong className="text-emerald-400">&quot;GitHub Actions&quot;</strong></li>
+                <li>We already added <code className="text-indigo-300">.github/workflows/deploy.yml</code> and configured <code className="text-indigo-300">base: &apos;/Kai-Testing-Space/&apos;</code>!</li>
+              </ol>
+            </div>
+          </div>
+
           {/* Workflow Steps */}
           <div className="space-y-3">
             <h3 className="text-xs font-semibold tracking-wider text-gray-400 uppercase">

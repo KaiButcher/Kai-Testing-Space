@@ -4,8 +4,13 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
+  // Use repository subpath on GitHub Pages, fallback to relative path
+  const basePath = process.env.GITHUB_ACTIONS
+    ? '/Kai-Testing-Space/'
+    : (process.env.BASE_URL || './');
+
   return {
-    base: './',
+    base: basePath,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
