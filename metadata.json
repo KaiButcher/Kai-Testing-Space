@@ -1,0 +1,6 @@
+{
+  "name": "Kai's Mind",
+  "description": "Digital garden and lab portfolio showcasing interactive prototypes, sandbox tools, and creative coding concepts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
