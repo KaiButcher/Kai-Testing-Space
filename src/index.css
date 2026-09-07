@@ -53,6 +53,50 @@
   position: relative;
 }
 
+/* 3x3 Bento Grid System */
+.bento-3x3-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "space"
+    "photo"
+    "design"
+    "anim"
+    "archive";
+  gap: 1px;
+}
+
+@media (min-width: 640px) {
+  .bento-3x3-container {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas:
+      "space   photo  photo"
+      "design  design anim"
+      "archive archive anim";
+  }
+}
+
+.bento-area-space {
+  grid-area: space;
+}
+
+.bento-area-photo {
+  grid-area: photo;
+}
+
+.bento-area-design {
+  grid-area: design;
+}
+
+.bento-area-anim {
+  grid-area: anim;
+}
+
+.bento-area-archive {
+  grid-area: archive;
+}
+
 /* Subtle matte grain overlay */
 .bg-matte-noise {
   background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 0);

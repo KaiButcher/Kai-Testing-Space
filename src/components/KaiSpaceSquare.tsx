@@ -1,25 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 export const KaiSpaceSquare: React.FC = () => {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <div
       id="bento-kais-space"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="bento-grey col-span-1 row-span-1 relative p-6 sm:p-8 flex flex-col justify-between overflow-hidden select-none h-full group"
+      className="bento-grey bento-area-space relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden select-none h-full min-h-[220px] sm:min-h-0 group"
     >
-      {/* 
-        Signature Chromatic Ambient Aurora Diffuse Glow
-        (Emerald green, indigo violet, warm amber) from reference image
-      */}
-      <div 
-        className={`absolute inset-0 chromatic-aurora transition-opacity duration-700 pointer-events-none ${
-          hovered ? 'opacity-100 scale-105' : 'opacity-85'
-        }`} 
-      />
-      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-40" />
+      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-30" />
 
       {/* Top Header Row */}
       <div className="relative z-10 flex items-center justify-between w-full">
@@ -36,11 +23,11 @@ export const KaiSpaceSquare: React.FC = () => {
       </div>
 
       {/* Center Typographic Statement */}
-      <div className="relative z-10 my-auto py-4 text-center">
-        <h1 className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-semibold tracking-wider text-white uppercase mb-2 leading-tight">
+      <div className="relative z-10 my-auto py-4">
+        <h1 className="text-2xl sm:text-3xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold tracking-wider text-white uppercase mb-2 leading-tight">
           Kai&apos;s Space
         </h1>
-        <p className="text-[10px] sm:text-xs font-mono tracking-[0.18em] text-white/75 uppercase max-w-[240px] mx-auto leading-relaxed">
+        <p className="text-[10px] sm:text-xs font-mono tracking-[0.18em] text-white/75 uppercase leading-relaxed max-w-[240px]">
           Interaction Systems &bull; Digital Laboratory
         </p>
       </div>

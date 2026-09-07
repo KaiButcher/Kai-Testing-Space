@@ -12,45 +12,25 @@ export const PhotographyBento: React.FC = () => {
       rel="noopener noreferrer"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="bento-grey col-span-1 lg:col-span-2 row-span-1 relative p-6 sm:p-8 flex flex-col justify-between overflow-hidden cursor-pointer select-none group h-full block"
+      className="bento-grey bento-area-photo relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden cursor-pointer select-none group h-full min-h-[260px] sm:min-h-0"
       title="View Kai Butcher's Photography on Unsplash"
     >
-      {/* Background Architectural Photo with Radial Starburst Texture from Reference */}
+      {/* Background Architectural Photo from Unsplash */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop"
-          alt="Kai Butcher Photography Archive"
+          src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop"
+          alt="Kai Butcher Photography"
           referrerPolicy="no-referrer"
           className={`w-full h-full object-cover object-center grayscale contrast-125 transition-all duration-700 ease-out ${
-            hovered ? 'scale-105 opacity-55' : 'scale-100 opacity-40'
+            hovered ? 'scale-105 opacity-60' : 'scale-100 opacity-45'
           }`}
         />
 
-        {/* Radial starburst raycast texture overlay from reference image */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_15%,_#121316_80%)]" />
-
-        {/* Radial line grid raycast lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-35 pointer-events-none" viewBox="0 0 200 200">
-          {Array.from({ length: 36 }).map((_, i) => (
-            <line
-              key={i}
-              x1="100"
-              y1="100"
-              x2={100 + 95 * Math.cos((i * 10 * Math.PI) / 180)}
-              y2={100 + 95 * Math.sin((i * 10 * Math.PI) / 180)}
-              stroke="rgba(255,255,255,0.45)"
-              strokeWidth="0.5"
-              strokeDasharray="2 4"
-            />
-          ))}
-          <circle cx="100" cy="100" r="14" fill="#ffffff" opacity="0.15" />
-          <circle cx="100" cy="100" r="3" fill="#ffffff" />
-        </svg>
-
-        <div className="absolute inset-0 bg-[#121316]/50" />
+        {/* Contrast Gradient Overlay for Typography Legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#121316] via-[#121316]/70 to-[#121316]/40 pointer-events-none" />
       </div>
 
-      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-30" />
+      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-20" />
 
       {/* Top Meta Line */}
       <div className="relative z-10 flex items-center justify-between w-full">
@@ -70,15 +50,15 @@ export const PhotographyBento: React.FC = () => {
         </div>
       </div>
 
-      {/* Center Large Plain Text Area */}
+      {/* Center Large Typography */}
       <div className="relative z-10 my-auto py-4">
         <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.22em] text-white/50 uppercase block mb-1.5">
           VISUAL CATALOG
         </span>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-white uppercase leading-none mb-2">
+        <h2 className="text-3xl sm:text-4xl md:text-3xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-white uppercase leading-none mb-2">
           Photography
         </h2>
-        <p className="text-xs sm:text-sm font-normal text-white/70 max-w-lg leading-relaxed">
+        <p className="text-xs sm:text-sm font-normal text-white/75 max-w-lg leading-relaxed">
           Curated monochrome architectural, spatial &amp; light captures.
         </p>
       </div>
