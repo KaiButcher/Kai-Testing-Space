@@ -50,7 +50,7 @@ export const KaiSpaceSquare: React.FC<KaiSpaceSquareProps> = ({ onExpand }) => {
           Kai&apos;s Space
         </h1>
         <p className="text-[10px] sm:text-xs font-mono tracking-[0.18em] text-white/75 uppercase leading-relaxed max-w-[240px]">
-          Interaction Systems &bull; Digital Laboratory
+          Graphic &amp; Digital Designer &bull; London
         </p>
       </div>
 

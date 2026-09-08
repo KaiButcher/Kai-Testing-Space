@@ -5,7 +5,7 @@ import { BentoPageId } from '../../types';
 import { KaiSpaceSubpage } from './KaiSpaceSubpage';
 import { PhotographySubpage } from './PhotographySubpage';
 import { GraphicDesignSubpage } from './GraphicDesignSubpage';
-import { AnimationSubpage } from './AnimationSubpage';
+import { AnimationSubpage as PlaygroundSubpage } from './AnimationSubpage';
 import { ArchiveSubpage } from './ArchiveSubpage';
 
 interface BentoModalWrapperProps {
@@ -93,7 +93,7 @@ export const BentoModalWrapper: React.FC<BentoModalWrapperProps> = ({
             {activeBento === 'space' && <KaiSpaceSubpage />}
             {activeBento === 'photo' && <PhotographySubpage />}
             {activeBento === 'design' && <GraphicDesignSubpage />}
-            {activeBento === 'anim' && <AnimationSubpage />}
+            {(activeBento === 'playground' || activeBento === 'anim') && <PlaygroundSubpage />}
             {activeBento === 'archive' && <ArchiveSubpage />}
           </motion.div>
         </motion.div>

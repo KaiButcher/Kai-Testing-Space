@@ -246,15 +246,15 @@ export const PhotographySubpage: React.FC = () => {
       </div>
 
       {/* Hero Banner */}
-      <div className="mb-12">
+      <div className="mb-10 sm:mb-12">
         <span className="text-xs font-mono tracking-[0.25em] text-white/50 uppercase block mb-3">
-          ARCHITECTURAL &bull; BRUTALIST &bull; LIGHT STUDIES
+          ARCHITECTURAL &bull; BRUTALIST &bull; MONOCHROME
         </span>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white uppercase leading-[0.95] mb-6">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white uppercase leading-[0.95] mb-5">
           Photography
         </h1>
-        <p className="text-base sm:text-lg text-white/80 font-normal leading-relaxed max-w-3xl mb-8">
-          A curated catalog of monochrome spatial captures examining structural concrete, optical voids, and architectural light. Shot on manual rangefinders and medium format analog film.
+        <p className="text-base sm:text-lg text-white/80 font-normal leading-relaxed max-w-2xl mb-8">
+          Monochrome architectural and spatial captures studying structural mass, shadows, and natural geometry.
         </p>
 
         {/* Series Filter Tabs */}
@@ -338,36 +338,39 @@ export const PhotographySubpage: React.FC = () => {
       </div>
 
       {/* Photographic Gear Specs */}
-      <div className="bg-[#16181d] border border-white/10 rounded-xl p-6 sm:p-8 mb-12">
-        <div className="mb-6">
-          <span className="text-xs font-mono text-white/50 tracking-widest uppercase block mb-1">
-            OPTICS &amp; DARKROOM EQUIPMENT
-          </span>
-          <h2 className="text-2xl font-bold text-white uppercase tracking-tight">
-            The Rangefinder Kit
-          </h2>
+      <div className="bg-[#14161b] border border-white/10 rounded-2xl p-6 sm:p-8 mb-12">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <span className="text-[10px] sm:text-xs font-mono text-white/50 tracking-widest uppercase block mb-1">
+              OPTICS &amp; EQUIPMENT
+            </span>
+            <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-tight">
+              Camera Kit
+            </h2>
+          </div>
+          <span className="text-xs font-mono text-white/40">35MM &amp; 120 FORMAT</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-            <span className="text-[10px] font-mono text-white/40 uppercase block mb-1">BODY // DIGITAL</span>
-            <h4 className="text-sm font-bold text-white font-mono mb-1">Leica M10-R</h4>
-            <p className="text-xs text-white/70">40.89MP full-frame rangefinder, base ISO 100, manual mechanical focus patch.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+          <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
+            <span className="text-[10px] text-white/40 uppercase block mb-1">DIGITAL BODY</span>
+            <h4 className="text-sm font-bold text-white mb-0.5">Leica M10-R</h4>
+            <p className="text-[11px] text-white/60">40.8MP Rangefinder</p>
           </div>
-          <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-            <span className="text-[10px] font-mono text-white/40 uppercase block mb-1">OPTICS // STANDARD</span>
-            <h4 className="text-sm font-bold text-white font-mono mb-1">Summicron 35mm f/2</h4>
-            <p className="text-xs text-white/70">ASPH formulation, zero barrel distortion, razor-sharp edge contrast at f/5.6.</p>
+          <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
+            <span className="text-[10px] text-white/40 uppercase block mb-1">PRIME LENS</span>
+            <h4 className="text-sm font-bold text-white mb-0.5">Summicron 35mm</h4>
+            <p className="text-[11px] text-white/60">f/2 ASPH Optics</p>
           </div>
-          <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-            <span className="text-[10px] font-mono text-white/40 uppercase block mb-1">BODY // ANALOG</span>
-            <h4 className="text-sm font-bold text-white font-mono mb-1">Hasselblad 500C/M</h4>
-            <p className="text-xs text-white/70">6x6 medium format SLR with Carl Zeiss Planar 80mm f/2.8 T* coating.</p>
+          <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
+            <span className="text-[10px] text-white/40 uppercase block mb-1">ANALOG BODY</span>
+            <h4 className="text-sm font-bold text-white mb-0.5">Hasselblad 500C/M</h4>
+            <p className="text-[11px] text-white/60">6x6 Medium Format</p>
           </div>
-          <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-            <span className="text-[10px] font-mono text-white/40 uppercase block mb-1">EMULSIONS</span>
-            <h4 className="text-sm font-bold text-white font-mono mb-1">Tri-X 400 &amp; HP5+</h4>
-            <p className="text-xs text-white/70">Traditional silver halide grain, developed by hand in Kodak D-76 and Rodinal.</p>
+          <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
+            <span className="text-[10px] text-white/40 uppercase block mb-1">EMULSIONS</span>
+            <h4 className="text-sm font-bold text-white mb-0.5">Tri-X &amp; HP5+</h4>
+            <p className="text-[11px] text-white/60">Silver Halide B&amp;W</p>
           </div>
         </div>
       </div>

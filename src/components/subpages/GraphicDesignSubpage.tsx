@@ -32,52 +32,52 @@ const caseStudies: CaseStudy[] = [
     id: 'case-01',
     title: 'Monolith Records',
     subtitle: 'Vinyl Identity & Packaging System',
-    category: 'Music & Identity',
-    year: '2025 — 2026',
-    client: 'Monolith Sound Lab, Berlin',
-    deliverables: ['12-Inch Vinyl Sleeves', 'Digital Art Direction', 'Custom Display Typeface', 'Silkscreen Tour Posters'],
-    description: 'A brutalist packaging identity for an experimental techno label. Features 350gsm uncoated black kraft cardstock with metallic silver pantone ink and blind debossed barcode geometry.',
-    gridSystem: '12-Field Modular Swiss Grid with strict 4mm baseline steps',
-    typeStack: ['IBM Plex Sans Bold', 'Custom Monolith Stencil Mono'],
+    category: 'Identity',
+    year: '2025',
+    client: 'Monolith Sound Lab',
+    deliverables: ['Vinyl Sleeves', 'Digital Art Direction', 'Poster Series'],
+    description: 'Minimalist packaging and identity system for an experimental sound label, featuring metallic pantone inks on uncoated cardstock.',
+    gridSystem: '12-Field Modular Grid with 4mm baseline rhythm',
+    typeStack: ['IBM Plex Sans', 'Monolith Mono'],
     accent: '#ffffff',
   },
   {
     id: 'case-02',
     title: 'Neo Architectural Quarterly',
-    subtitle: '160-Page Editorial Book Design',
-    category: 'Editorial & Print',
+    subtitle: 'Editorial Publication Design',
+    category: 'Editorial',
     year: '2025',
-    client: 'Architectural Association Press',
-    deliverables: ['Editorial Grid Architecture', 'Hardcover Linen Binding', 'Infographic Cartography', 'Index Systems'],
-    description: 'An asymmetrical 5-column layout system designed to accommodate raw concrete photography alongside dense architectural essays. Printed on Munken Pure 120gsm paper.',
-    gridSystem: '5-Column Asymmetric Grid with 18pt vertical rhythm',
-    typeStack: ['Helvetica Neue LT Std', 'Univers 55', 'Courier Final'],
+    client: 'Architectural Press',
+    deliverables: ['Editorial Grid', 'Linen Binding', 'Cartography'],
+    description: 'Asymmetric 5-column layout system pairing raw concrete photography with architectural essays.',
+    gridSystem: '5-Column Asymmetric Grid with 18pt vertical scale',
+    typeStack: ['Helvetica Neue LT', 'Univers 55'],
     accent: '#d4d4d8',
   },
   {
     id: 'case-03',
     title: 'Vektor Sans Specimen',
-    subtitle: 'Geometric Grotesque Digital Specimen',
-    category: 'Typeface Design',
+    subtitle: 'Variable Type Specimen',
+    category: 'Type Design',
     year: '2024',
-    client: 'Self-Initiated / Type Foundry',
-    deliverables: ['Variable Font File (VF)', 'Interactive Specimen Website', 'Specimen Broadside Poster (A1)', 'Glyph Tables'],
-    description: 'A 9-weight variable typeface engineered specifically for low-latency digital displays. Optical sizes optimized for 12px micro-metadata through to 120px architectural display signage.',
-    gridSystem: 'Mathematical Proportional Scale (Step 1.25 Major Third)',
-    typeStack: ['Vektor Sans VF', 'Vektor Mono Tabular'],
+    client: 'Type Foundry',
+    deliverables: ['Variable Font', 'Specimen Site', 'Broadside Poster'],
+    description: 'Variable grotesk typeface engineered for digital interfaces and architectural display signage.',
+    gridSystem: 'Mathematical Scale (Step 1.25 Major Third)',
+    typeStack: ['Vektor Sans VF', 'Vektor Mono'],
     accent: '#ffffff',
   },
   {
     id: 'case-04',
     title: 'Chrono Expo Berlin',
     subtitle: 'Exhibition Identity & Spatial Signage',
-    category: 'Spatial & Environmental',
+    category: 'Spatial',
     year: '2024',
-    client: 'Museum für Gestaltung Berlin',
-    deliverables: ['Wayfinding Totems', 'Silkscreen Exhibition Catalog', 'Bilingual Typography Guide', 'Laser-etched Plates'],
-    description: 'Wayfinding system engineered for a temporal design exhibition. Large-scale typography silk-screened directly onto raw sandblasted aluminum panels with fluorescent directional indicators.',
-    gridSystem: '8-Unit Spatial Wall Matrix with 120mm module',
-    typeStack: ['Akzidenz-Grotesk BQ', 'DIN 1451 Mittelschrift'],
+    client: 'Museum für Gestaltung',
+    deliverables: ['Wayfinding', 'Catalog', 'Signage Plates'],
+    description: 'Wayfinding system with typography silk-screened onto sandblasted aluminum panels with directional cues.',
+    gridSystem: '8-Unit Spatial Matrix with 120mm module',
+    typeStack: ['Akzidenz-Grotesk', 'DIN 1451'],
     accent: '#a1a1aa',
   },
 ];
@@ -169,24 +169,24 @@ export const GraphicDesignSubpage: React.FC = () => {
       </div>
 
       {/* Hero Banner */}
-      <div className="mb-12">
+      <div className="mb-10 sm:mb-12">
         <span className="text-xs font-mono tracking-[0.25em] text-white/50 uppercase block mb-3">
-          EDITORIAL SYSTEMS &bull; BRAND ARCHITECTURE &bull; POSTER SPECIMENS
+          BRAND &bull; EDITORIAL &bull; TYPOGRAPHY
         </span>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white uppercase leading-[0.95] mb-6">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white uppercase leading-[0.95] mb-5">
           Graphic <span className="font-light text-white/70">Design</span>
         </h1>
-        <p className="text-base sm:text-lg text-white/80 font-normal leading-relaxed max-w-3xl mb-8">
-          Disciplined editorial architectures, spatial typography, and tactile identity systems. Grounded in mathematical grid construction and high-contrast monochrome materiality.
+        <p className="text-base sm:text-lg text-white/80 font-normal leading-relaxed max-w-2xl mb-8">
+          Editorial architectures, custom typography, and brand identity systems developed with Swiss modernist structure.
         </p>
 
         {/* View Switcher Tabs */}
         <div className="flex items-center space-x-2 overflow-x-auto pb-2 no-scrollbar">
           {[
-            { id: 'cases', label: '01 Featured Case Studies (4)' },
-            { id: 'typetester', label: '02 Interactive Type Tester' },
-            { id: 'posters', label: '03 Poster Specimens (6)' },
-            { id: 'matrix', label: '04 Swiss Grid & Color Matrix' },
+            { id: 'cases', label: '01 Case Studies' },
+            { id: 'typetester', label: '02 Type Tester' },
+            { id: 'posters', label: '03 Posters' },
+            { id: 'matrix', label: '04 Palette & Grid' },
           ].map((tab) => (
             <button
               key={tab.id}

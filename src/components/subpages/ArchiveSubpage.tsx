@@ -337,42 +337,6 @@ export const ArchiveSubpage: React.FC = () => {
         </div>
       </div>
 
-      {/* Historical Silhouette Methodology Note */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-[#121316] border border-white/15 mb-12">
-        <div className="flex items-center space-x-2 text-xs font-mono text-white/60 mb-3">
-          <ShieldAlert className="w-4 h-4 text-white/80" />
-          <span className="tracking-widest uppercase">AIR DEFENCE OBSERVATION METHODOLOGY (1940)</span>
-        </div>
-        <h4 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-white mb-3">
-          The Science of Ground-to-Air Silhouette Identification
-        </h4>
-        <p className="text-xs sm:text-sm text-white/75 font-light leading-relaxed mb-4">
-          During the Battle of Britain, early warning radar (Chain Home) reported incoming raids, but ground spotters of the Royal Observer Corps and anti-aircraft artillery batteries had to verify aircraft identities visually in fractions of seconds. The Temple Press manual established the standard comparative recognition sequence:
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
-          <div className="p-3 rounded-lg bg-black/40 border border-white/10">
-            <span className="text-white/40 block mb-1">STEP 01</span>
-            <span className="text-white font-bold block mb-1">WING PLANFORM</span>
-            <span className="text-white/60 text-[11px]">Elliptical, tapered, swept, rectangular, or gull-wing geometry.</span>
-          </div>
-          <div className="p-3 rounded-lg bg-black/40 border border-white/10">
-            <span className="text-white/40 block mb-1">STEP 02</span>
-            <span className="text-white font-bold block mb-1">ENGINE NACELLES</span>
-            <span className="text-white/60 text-[11px]">Single inline V-12, radial cowling, twin wing-mounted or pusher props.</span>
-          </div>
-          <div className="p-3 rounded-lg bg-black/40 border border-white/10">
-            <span className="text-white/40 block mb-1">STEP 03</span>
-            <span className="text-white font-bold block mb-1">FUSELAGE PROFILE</span>
-            <span className="text-white/60 text-[11px]">Stepped cockpits, glazed noses, gun turrets, under-slung radiators.</span>
-          </div>
-          <div className="p-3 rounded-lg bg-black/40 border border-white/10">
-            <span className="text-white/40 block mb-1">STEP 04</span>
-            <span className="text-white font-bold block mb-1">TAILPLANE &amp; FIN</span>
-            <span className="text-white/60 text-[11px]">Single vertical stabilizer vs twin endplate rudders and dihedral tilt.</span>
-          </div>
-        </div>
-      </div>
-
       {/* Archival Collection Pipeline (One of many to come) */}
       <div className="p-6 sm:p-8 rounded-2xl bg-[#14161b] border border-white/10 mb-12">
         <div className="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-white/10">
