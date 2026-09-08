@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
-import { ExternalLink, Camera } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Camera, Maximize2 } from 'lucide-react';
 
-export const PhotographyBento: React.FC = () => {
+interface PhotographyBentoProps {
+  onExpand?: () => void;
+}
+
+export const PhotographyBento: React.FC<PhotographyBentoProps> = ({ onExpand }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <a
+    <motion.div
+      layoutId="bento-card-photo"
       id="bento-photography"
-      href="https://unsplash.com/@kaibutcher"
-      target="_blank"
-      rel="noopener noreferrer"
+      onClick={onExpand}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="bento-grey bento-area-photo relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden cursor-pointer select-none group h-full min-h-[260px] sm:min-h-0"
-      title="View Kai Butcher's Photography on Unsplash"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onExpand?.();
+        }
+      }}
+      aria-label="Photography Bento - Click to expand subpage"
     >
       {/* Background Architectural Photo from Unsplash */}
       <div className="absolute inset-0 z-0 overflow-hidden">
@@ -43,10 +55,10 @@ export const PhotographyBento: React.FC = () => {
 
         <div
           className={`w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white/80 transition-all duration-300 ${
-            hovered ? 'bg-white text-black border-white rotate-45' : 'bg-white/5'
+            hovered ? 'bg-white text-black border-white scale-110' : 'bg-white/5'
           }`}
         >
-          <ExternalLink className="w-3.5 h-3.5" />
+          <Maximize2 className="w-3.5 h-3.5" />
         </div>
       </div>
 
@@ -67,10 +79,10 @@ export const PhotographyBento: React.FC = () => {
       <div className="relative z-10 pt-3 border-t border-white/15 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-white/60">
         <span className="tracking-widest">@KAIBUTCHER</span>
         <span className="tracking-widest text-white/90 group-hover:underline flex items-center space-x-1">
-          <span>VIEW ON UNSPLASH</span>
+          <span>EXPAND SUBPAGE</span>
           <span>&rarr;</span>
         </span>
       </div>
-    </a>
+    </motion.div>
   );
 };
