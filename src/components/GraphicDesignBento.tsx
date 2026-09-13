@@ -12,7 +12,7 @@ export const GraphicDesignBento: React.FC<GraphicDesignBentoProps> = ({ onExpand
       layoutId="bento-card-design"
       id="bento-graphic-design"
       onClick={onExpand}
-      className="bento-grey bento-area-design relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden cursor-pointer select-none group h-full min-h-[220px] sm:min-h-0 hover:bg-[#181a20] transition-colors"
+      className="bento-grey bento-area-design relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden cursor-pointer select-none group h-full min-h-[220px] sm:min-h-0 hover:bg-white/[0.02] transition-colors"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -23,7 +23,7 @@ export const GraphicDesignBento: React.FC<GraphicDesignBentoProps> = ({ onExpand
       }}
       aria-label="Graphic Design Bento - Click to expand subpage"
     >
-      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-30" />
+      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-20" />
 
       {/* Top Meta Line */}
       <div className="relative z-10 flex items-center justify-between w-full">
@@ -37,10 +37,10 @@ export const GraphicDesignBento: React.FC<GraphicDesignBentoProps> = ({ onExpand
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/60 border border-white/10 tracking-wider">
+          <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/70 tracking-wider">
             SYSTEMS
           </span>
-          <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center text-white/60 group-hover:text-white group-hover:border-white/50 group-hover:scale-110 transition-all">
+          <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-white/60 group-hover:text-white group-hover:bg-white/15 group-hover:scale-110 transition-all">
             <Maximize2 className="w-3 h-3" />
           </div>
         </div>
@@ -62,13 +62,13 @@ export const GraphicDesignBento: React.FC<GraphicDesignBentoProps> = ({ onExpand
       </div>
 
       {/* Bottom Specs Line */}
-      <div className="relative z-10 pt-3 border-t border-white/15 flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-xs">
+      <div className="relative z-10 pt-3 flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-xs">
         <div className="flex items-center space-x-2">
           <span className="text-white/40 font-mono tracking-widest text-[10px]">STACK:</span>
           {['TYPOGRAPHY', 'GRID', 'BRAND'].map((tag, i) => (
             <span
               key={i}
-              className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/80 border border-white/10 tracking-wide uppercase"
+              className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/80 tracking-wide uppercase"
             >
               {tag}
             </span>

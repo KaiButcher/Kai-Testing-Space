@@ -78,7 +78,7 @@ export const KaiSpaceSubpage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 text-white selection:bg-white selection:text-black">
       {/* Top Header / Status Row */}
-      <div className="border-b border-white/15 pb-6 mb-8 sm:mb-12 flex flex-wrap items-center justify-between gap-4">
+      <div className="pb-8 mb-8 sm:mb-12 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-xs sm:text-sm font-mono tracking-[0.25em] text-white/80 uppercase">
@@ -91,14 +91,14 @@ export const KaiSpaceSubpage: React.FC = () => {
             <MapPin className="w-3.5 h-3.5 text-white/60" />
             LONDON, UNITED KINGDOM
           </span>
-          <span className="px-2.5 py-1 rounded bg-white/10 text-white/90 border border-white/20 text-[11px] font-mono tracking-wider">
+          <span className="px-2.5 py-1 rounded bg-white/10 text-white/90 text-[11px] font-mono tracking-wider">
             UTC+1
           </span>
         </div>
       </div>
 
       {/* Hero Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-12 sm:mb-16">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start mb-16 sm:mb-20">
         <div className="lg:col-span-8">
           <span className="text-xs font-mono tracking-[0.28em] text-white/50 uppercase block mb-3">
             DESIGNER &bull; LONDON
@@ -125,7 +125,7 @@ export const KaiSpaceSubpage: React.FC = () => {
 
             <button
               onClick={handleCopyEmail}
-              className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-mono text-xs sm:text-sm border border-white/20 transition-all flex items-center space-x-2 cursor-pointer active:scale-95"
+              className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-mono text-xs sm:text-sm transition-all flex items-center space-x-2 cursor-pointer active:scale-95"
             >
               {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
               <span>{copiedEmail ? 'Email Copied' : 'Copy Email'}</span>
@@ -133,7 +133,7 @@ export const KaiSpaceSubpage: React.FC = () => {
 
             <a
               href="mailto:KaiButcherDesign@gmail.com"
-              className="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 font-mono text-xs sm:text-sm border border-white/10 transition-all flex items-center space-x-2"
+              className="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 font-mono text-xs sm:text-sm transition-all flex items-center space-x-2"
             >
               <Mail className="w-4 h-4" />
               <span>KaiButcherDesign@gmail.com</span>
@@ -141,38 +141,38 @@ export const KaiSpaceSubpage: React.FC = () => {
           </div>
         </div>
 
-        {/* Profile Card / Quick Facts */}
-        <div className="lg:col-span-4 bg-[#14161b] border border-white/15 rounded-2xl p-6 space-y-4 text-xs font-mono">
-          <div className="border-b border-white/10 pb-3 flex items-center justify-between">
+        {/* Profile Quick Facts Column */}
+        <div className="lg:col-span-4 space-y-4 text-xs font-mono pt-2">
+          <div className="pb-2 flex items-center justify-between">
             <span className="text-[10px] text-white/40 uppercase tracking-widest">
               PROFESSIONAL PROFILE
             </span>
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div>
-              <span className="text-white/40 block text-[10px] uppercase">Location</span>
-              <span className="text-white font-medium">London, United Kingdom</span>
+              <span className="text-white/40 block text-[10px] uppercase tracking-wider mb-0.5">Location</span>
+              <span className="text-white font-medium text-sm">London, United Kingdom</span>
             </div>
 
             <div>
-              <span className="text-white/40 block text-[10px] uppercase">Primary Role</span>
-              <span className="text-white font-medium">Designer at Phantom</span>
+              <span className="text-white/40 block text-[10px] uppercase tracking-wider mb-0.5">Primary Role</span>
+              <span className="text-white font-medium text-sm">Designer at Phantom</span>
             </div>
 
             <div>
-              <span className="text-white/40 block text-[10px] uppercase">Specialisation</span>
-              <span className="text-white font-medium">Brand Identity &bull; Digital &bull; Motion</span>
+              <span className="text-white/40 block text-[10px] uppercase tracking-wider mb-0.5">Specialisation</span>
+              <span className="text-white font-medium text-sm">Brand Identity &bull; Digital &bull; Motion</span>
             </div>
 
             <div>
-              <span className="text-white/40 block text-[10px] uppercase">Network</span>
+              <span className="text-white/40 block text-[10px] uppercase tracking-wider mb-0.5">Network</span>
               <a
                 href={linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white hover:underline flex items-center gap-1 mt-0.5 text-[11px]"
+                className="text-white/90 hover:text-white hover:underline flex items-center gap-1 mt-0.5 text-xs font-mono"
               >
                 <span>linkedin.com/in/kai-butcher-368500103</span>
                 <ArrowUpRight className="w-3 h-3" />
@@ -183,8 +183,8 @@ export const KaiSpaceSubpage: React.FC = () => {
       </div>
 
       {/* Experience Section */}
-      <div className="mb-12">
-        <div className="border-b border-white/15 pb-3 mb-6 flex items-center justify-between">
+      <div className="mb-16">
+        <div className="pb-4 mb-6 flex items-center justify-between">
           <div>
             <span className="text-[10px] sm:text-xs font-mono tracking-[0.25em] text-white/50 uppercase block mb-1">
               CAREER &bull; ROLES
@@ -196,16 +196,16 @@ export const KaiSpaceSubpage: React.FC = () => {
           <span className="text-xs font-mono text-white/40">LONDON</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {experience.map((item, idx) => (
             <div
               key={idx}
-              className="bg-[#14161b] border border-white/10 rounded-xl p-6 flex flex-col justify-between hover:border-white/20 transition-colors"
+              className="flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between mb-3 text-xs font-mono">
+                <div className="flex items-center justify-between mb-2 text-xs font-mono">
                   <span className="text-white/50 tracking-wider uppercase">{item.period}</span>
-                  <span className="px-2 py-0.5 rounded bg-white/10 text-white border border-white/15">
+                  <span className="px-2.5 py-0.5 rounded bg-white/10 text-white text-[11px]">
                     {item.company}
                   </span>
                 </div>
@@ -217,11 +217,11 @@ export const KaiSpaceSubpage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/10">
+              <div className="flex flex-wrap gap-1.5 pt-2">
                 {item.skills.map((s, i) => (
                   <span
                     key={i}
-                    className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/10"
+                    className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/70"
                   >
                     {s}
                   </span>
@@ -233,8 +233,8 @@ export const KaiSpaceSubpage: React.FC = () => {
       </div>
 
       {/* Focus Areas */}
-      <div className="mb-12">
-        <div className="border-b border-white/15 pb-3 mb-6">
+      <div className="mb-16">
+        <div className="pb-4 mb-6">
           <span className="text-[10px] sm:text-xs font-mono tracking-[0.25em] text-white/50 uppercase block mb-1">
             DISCIPLINES &bull; CRAFT
           </span>
@@ -243,28 +243,30 @@ export const KaiSpaceSubpage: React.FC = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {focusAreas.map((area, idx) => (
             <div
               key={idx}
-              className="bg-[#14161b] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors"
+              className="flex flex-col justify-between"
             >
-              <span className="text-[10px] font-mono text-white/40 tracking-widest uppercase block mb-1.5">
-                {area.eyebrow}
-              </span>
-              <h3 className="text-sm font-bold text-white uppercase tracking-tight mb-2">
-                {area.title}
-              </h3>
-              <p className="text-xs text-white/65 font-light leading-relaxed">
-                {area.desc}
-              </p>
+              <div>
+                <span className="text-[10px] font-mono text-white/40 tracking-widest uppercase block mb-1.5">
+                  {area.eyebrow}
+                </span>
+                <h3 className="text-base font-bold text-white uppercase tracking-tight mb-2">
+                  {area.title}
+                </h3>
+                <p className="text-xs text-white/70 font-light leading-relaxed">
+                  {area.desc}
+                </p>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Skills Matrix Pill Row */}
-      <div className="bg-[#121316] border border-white/10 rounded-2xl p-6 mb-12">
+      {/* Skills Matrix */}
+      <div className="mb-16">
         <span className="text-[10px] font-mono text-white/50 tracking-[0.2em] uppercase block mb-3">
           SKILLS &amp; PROFICIENCIES
         </span>
@@ -272,7 +274,7 @@ export const KaiSpaceSubpage: React.FC = () => {
           {skillsList.map((skill, idx) => (
             <span
               key={idx}
-              className="text-xs font-mono px-3 py-1.5 rounded-lg bg-white/5 text-white/85 border border-white/10"
+              className="text-xs font-mono px-3 py-1.5 rounded-lg bg-white/5 text-white/85"
             >
               {skill}
             </span>
@@ -281,7 +283,7 @@ export const KaiSpaceSubpage: React.FC = () => {
       </div>
 
       {/* Footer Row */}
-      <div className="pt-6 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-white/50">
+      <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-white/50">
         <span>KAI BUTCHER &bull; LONDON</span>
         <a
           href={linkedinUrl}

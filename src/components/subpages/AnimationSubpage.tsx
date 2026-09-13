@@ -437,8 +437,8 @@ export const PlaygroundSubpage: React.FC = () => {
 
       {/* SECTION 1: VIBE CODED TOOLS */}
       {(activeCategory === 'all' || activeCategory === 'tool') && (
-        <div className="mb-14 sm:mb-16">
-          <div className="border-b border-white/15 pb-3 mb-6 flex items-center justify-between">
+        <div className="mb-20">
+          <div className="pb-4 mb-8 flex items-center justify-between">
             <div>
               <span className="text-[10px] sm:text-xs font-mono tracking-[0.25em] text-emerald-400 uppercase block mb-1 flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3" />
@@ -453,11 +453,11 @@ export const PlaygroundSubpage: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             {/* Tool 1: ASCII & Dither Shifter */}
-            <div className="lg:col-span-7 bg-[#14161b] border border-white/15 rounded-2xl p-6 flex flex-col justify-between">
+            <div className="lg:col-span-7 flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
+                <div className="flex items-center justify-between pb-3 mb-4">
                   <div>
                     <span className="text-[10px] font-mono text-white/40 tracking-widest uppercase block mb-0.5">
                       TOOL 01 &bull; TEXT TO ASCII SHIFTER
@@ -466,7 +466,7 @@ export const PlaygroundSubpage: React.FC = () => {
                       ASCII &amp; Dither Generator
                     </h3>
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300">
                     VIBE CODED
                   </span>
                 </div>
@@ -476,7 +476,7 @@ export const PlaygroundSubpage: React.FC = () => {
                 </p>
 
                 {/* Input & Controls */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-xs font-mono">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 text-xs font-mono">
                   <div>
                     <label className="text-[10px] text-white/50 uppercase block mb-1">Source Text</label>
                     <input
@@ -484,7 +484,7 @@ export const PlaygroundSubpage: React.FC = () => {
                       value={asciiInput}
                       onChange={(e) => setAsciiInput(e.target.value)}
                       maxLength={20}
-                      className="w-full bg-black/60 border border-white/20 rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:border-white"
+                      className="w-full bg-white/5 rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:ring-1 focus:ring-white/30"
                       placeholder="Type text..."
                     />
                   </div>
@@ -496,10 +496,10 @@ export const PlaygroundSubpage: React.FC = () => {
                         <button
                           key={c}
                           onClick={() => setAsciiCharset(c)}
-                          className={`py-2 rounded border uppercase text-[10px] transition-colors cursor-pointer ${
+                          className={`py-2 rounded uppercase text-[10px] transition-colors cursor-pointer ${
                             asciiCharset === c
-                              ? 'bg-white text-black font-bold border-white'
-                              : 'bg-black/40 text-white/60 border-white/10 hover:text-white'
+                              ? 'bg-white text-black font-bold'
+                              : 'bg-white/5 text-white/60 hover:text-white'
                           }`}
                         >
                           {c}
@@ -510,15 +510,15 @@ export const PlaygroundSubpage: React.FC = () => {
                 </div>
 
                 {/* Live ASCII Screen */}
-                <div className="bg-black border border-white/15 rounded-xl p-4 font-mono text-[10px] sm:text-xs leading-[1.15] text-emerald-400 overflow-x-auto whitespace-pre tracking-widest select-all mb-4 max-h-[220px]">
+                <div className="bg-neutral-950 rounded-xl p-4 font-mono text-[10px] sm:text-xs leading-[1.15] text-emerald-400 overflow-x-auto whitespace-pre tracking-widest select-all mb-4 max-h-[220px]">
                   {currentAscii}
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-white/10 text-xs font-mono">
+              <div className="flex items-center justify-between pt-3 text-xs font-mono">
                 <button
                   onClick={() => setAsciiInverted(!asciiInverted)}
-                  className="px-3 py-1.5 rounded bg-white/5 hover:bg-white/15 text-white/80 border border-white/10 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded bg-white/5 hover:bg-white/15 text-white/80 transition-colors cursor-pointer"
                 >
                   {asciiInverted ? 'NORMAL CONTRAST' : 'INVERT CONTRAST'}
                 </button>
@@ -534,9 +534,9 @@ export const PlaygroundSubpage: React.FC = () => {
             </div>
 
             {/* Tool 2: Vibe Harmonic Palette Lab */}
-            <div className="lg:col-span-5 bg-[#14161b] border border-white/15 rounded-2xl p-6 flex flex-col justify-between">
+            <div className="lg:col-span-5 flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
+                <div className="flex items-center justify-between pb-3 mb-4">
                   <div>
                     <span className="text-[10px] font-mono text-white/40 tracking-widest uppercase block mb-0.5">
                       TOOL 02 &bull; COLOR HARMONY SYNTH
@@ -545,7 +545,7 @@ export const PlaygroundSubpage: React.FC = () => {
                       Vibe Harmonic Palettes
                     </h3>
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/80 border border-white/15">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/80">
                     CSS READY
                   </span>
                 </div>
@@ -560,10 +560,10 @@ export const PlaygroundSubpage: React.FC = () => {
                     <button
                       key={k}
                       onClick={() => setPalettePreset(k)}
-                      className={`text-[10px] font-mono px-2.5 py-1 rounded-lg border uppercase transition-all cursor-pointer ${
+                      className={`text-[10px] font-mono px-2.5 py-1 rounded-lg uppercase transition-all cursor-pointer ${
                         palettePreset === k
-                          ? 'bg-white text-black font-bold border-white'
-                          : 'bg-black/40 text-white/60 border-white/10 hover:text-white'
+                          ? 'bg-white text-black font-bold'
+                          : 'bg-white/5 text-white/60 hover:text-white'
                       }`}
                     >
                       {k}
@@ -573,7 +573,7 @@ export const PlaygroundSubpage: React.FC = () => {
 
                 {/* Live Gradient Preview Box */}
                 <div
-                  className="w-full h-20 rounded-xl border border-white/20 mb-4 shadow-inner relative overflow-hidden"
+                  className="w-full h-20 rounded-xl mb-4 shadow-inner relative overflow-hidden"
                   style={{ background: activePalette.gradient }}
                 >
                   <div className="absolute inset-0 bg-matte-noise opacity-20 pointer-events-none" />
@@ -583,11 +583,11 @@ export const PlaygroundSubpage: React.FC = () => {
                 </div>
 
                 {/* Swatches List */}
-                <div className="grid grid-cols-5 gap-1.5 mb-4">
+                <div className="grid grid-cols-5 gap-2 mb-4">
                   {activePalette.colors.map((c, i) => (
                     <div key={i} className="flex flex-col items-center">
                       <div
-                        className="w-full h-8 rounded-md border border-white/20 mb-1"
+                        className="w-full h-8 rounded-md mb-1"
                         style={{ backgroundColor: c }}
                       />
                       <span className="text-[9px] font-mono text-white/70 uppercase">{c}</span>
@@ -596,11 +596,11 @@ export const PlaygroundSubpage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono">
+              <div className="pt-3 flex items-center justify-between text-xs font-mono">
                 <span className="text-white/50 text-[11px]">5 HARMONIC STEPS</span>
                 <button
                   onClick={handleCopyPaletteCSS}
-                  className="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white text-white hover:text-black font-bold border border-white/20 transition-all flex items-center space-x-1.5 cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white text-white hover:text-black font-bold transition-all flex items-center space-x-1.5 cursor-pointer"
                 >
                   {copiedCSS ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedCSS ? 'COPIED CSS' : 'COPY GRADIENT CSS'}</span>
@@ -609,8 +609,8 @@ export const PlaygroundSubpage: React.FC = () => {
             </div>
 
             {/* Tool 3: Kinetic Particle Flowfield Canvas */}
-            <div className="lg:col-span-12 bg-[#14161b] border border-white/15 rounded-2xl p-6 sm:p-8">
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-white/10">
+            <div className="lg:col-span-12 pt-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4">
                 <div>
                   <span className="text-[10px] font-mono text-white/40 tracking-widest uppercase block mb-0.5">
                     TOOL 03 &bull; HTML5 CANVAS PHYSICS
@@ -626,10 +626,10 @@ export const PlaygroundSubpage: React.FC = () => {
                     <button
                       key={n}
                       onClick={() => setParticleCount(n)}
-                      className={`px-2 py-0.5 rounded border text-[11px] cursor-pointer ${
+                      className={`px-2 py-0.5 rounded text-[11px] cursor-pointer ${
                         particleCount === n
-                          ? 'bg-white text-black font-bold border-white'
-                          : 'bg-black/40 text-white/60 border-white/10'
+                          ? 'bg-white text-black font-bold'
+                          : 'bg-white/5 text-white/60'
                       }`}
                     >
                       {n}
@@ -637,7 +637,7 @@ export const PlaygroundSubpage: React.FC = () => {
                   ))}
                   <button
                     onClick={() => setIsParticlePlaying(!isParticlePlaying)}
-                    className="ml-2 px-3 py-1 rounded bg-white/10 hover:bg-white text-white hover:text-black transition-colors cursor-pointer border border-white/20"
+                    className="ml-2 px-3 py-1 rounded bg-white/10 hover:bg-white text-white hover:text-black transition-colors cursor-pointer"
                   >
                     {isParticlePlaying ? 'PAUSE' : 'RESUME'}
                   </button>
@@ -649,7 +649,7 @@ export const PlaygroundSubpage: React.FC = () => {
                   const rect = e.currentTarget.getBoundingClientRect();
                   setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
                 }}
-                className="w-full h-56 sm:h-72 bg-[#0d0e11] rounded-xl border border-white/20 relative overflow-hidden cursor-crosshair shadow-inner"
+                className="w-full h-56 sm:h-72 bg-neutral-950 rounded-xl relative overflow-hidden cursor-crosshair shadow-inner"
               >
                 <canvas ref={canvasRef} className="w-full h-full block" />
                 <div className="absolute top-3 left-4 text-[10px] font-mono text-white/40 tracking-widest uppercase pointer-events-none">
@@ -666,8 +666,8 @@ export const PlaygroundSubpage: React.FC = () => {
 
       {/* SECTION 2: IMAGES SHOWCASE */}
       {(activeCategory === 'all' || activeCategory === 'image') && (
-        <div className="mb-14 sm:mb-16">
-          <div className="border-b border-white/15 pb-3 mb-6 flex items-center justify-between">
+        <div className="mb-20">
+          <div className="pb-4 mb-8 flex items-center justify-between">
             <div>
               <span className="text-[10px] sm:text-xs font-mono tracking-[0.25em] text-white/50 uppercase block mb-1">
                 VISUAL ARTIFACTS &bull; HIGH-RESOLUTION WORKS
@@ -681,15 +681,15 @@ export const PlaygroundSubpage: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {images.map((img) => (
               <div
                 key={img.id}
                 onClick={() => setActiveMedia(img)}
-                className="bg-[#14161b] border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-all cursor-pointer group flex flex-col justify-between"
+                className="cursor-pointer group flex flex-col justify-between"
               >
                 {/* Visual Artboard Container */}
-                <div className={`aspect-[4/3] bg-gradient-to-br ${img.gradient} p-6 flex flex-col justify-between relative overflow-hidden group-hover:opacity-90 transition-opacity`}>
+                <div className={`aspect-[4/3] bg-gradient-to-br ${img.gradient} rounded-xl p-6 flex flex-col justify-between relative overflow-hidden group-hover:opacity-90 transition-opacity`}>
                   <div className="absolute inset-0 bg-matte-noise opacity-30 pointer-events-none" />
                   
                   <div className="absolute inset-0 flex items-center justify-center opacity-25 group-hover:scale-105 transition-transform duration-500 pointer-events-none">
@@ -699,7 +699,7 @@ export const PlaygroundSubpage: React.FC = () => {
                   </div>
 
                   <div className="relative z-10 flex justify-between items-start">
-                    <span className="text-[10px] font-mono tracking-widest text-white/70 uppercase bg-black/40 px-2 py-0.5 rounded border border-white/10">
+                    <span className="text-[10px] font-mono tracking-widest text-white/70 uppercase bg-black/40 px-2 py-0.5 rounded">
                       {img.id.toUpperCase()}
                     </span>
                     <span className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-white/60 group-hover:text-white group-hover:bg-white/20 transition-all">
@@ -716,22 +716,22 @@ export const PlaygroundSubpage: React.FC = () => {
                     </h3>
                   </div>
 
-                  <div className="relative z-10 pt-2 border-t border-white/15 flex justify-between items-center text-[9px] font-mono text-white/50">
+                  <div className="relative z-10 pt-2 flex justify-between items-center text-[9px] font-mono text-white/50">
                     <span>{img.technique}</span>
                     <span>{img.resolution}</span>
                   </div>
                 </div>
 
                 {/* Card Meta Info */}
-                <div className="p-5">
-                  <p className="text-xs text-white/70 font-light leading-relaxed mb-4">
+                <div className="pt-4">
+                  <p className="text-xs text-white/70 font-light leading-relaxed mb-3">
                     {img.desc}
                   </p>
-                  <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/10">
+                  <div className="flex flex-wrap gap-1.5">
                     {img.tags.map((t, i) => (
                       <span
                         key={i}
-                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/60 border border-white/10"
+                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/60"
                       >
                         {t}
                       </span>
@@ -746,8 +746,8 @@ export const PlaygroundSubpage: React.FC = () => {
 
       {/* SECTION 3: VIDEOS SHOWCASE */}
       {(activeCategory === 'all' || activeCategory === 'video') && (
-        <div className="mb-14 sm:mb-16">
-          <div className="border-b border-white/15 pb-3 mb-6 flex items-center justify-between">
+        <div className="mb-20">
+          <div className="pb-4 mb-8 flex items-center justify-between">
             <div>
               <span className="text-[10px] sm:text-xs font-mono tracking-[0.25em] text-white/50 uppercase block mb-1">
                 KINETIC LOOPS &bull; 60-120 FPS MOTION
@@ -761,16 +761,16 @@ export const PlaygroundSubpage: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videos.map((vid) => {
               const isPlaying = playingVideoId === vid.id;
               return (
                 <div
                   key={vid.id}
-                  className="bg-[#14161b] border border-white/10 rounded-2xl overflow-hidden p-6 flex flex-col justify-between hover:border-white/20 transition-all"
+                  className="flex flex-col justify-between"
                 >
                   {/* Motion Simulator Stage */}
-                  <div className="relative aspect-video bg-black rounded-xl border border-white/20 overflow-hidden mb-5 flex flex-col justify-between p-4 group">
+                  <div className="relative aspect-video bg-neutral-950 rounded-xl overflow-hidden mb-4 flex flex-col justify-between p-4 group">
                     <div className="absolute inset-0 bg-matte-noise opacity-20 pointer-events-none" />
 
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -804,7 +804,7 @@ export const PlaygroundSubpage: React.FC = () => {
                         </div>
                       )}
                       {vid.id === 'vid-04' && (
-                        <div className="relative w-48 h-12 bg-white/5 rounded-full border border-white/10 flex items-center px-2">
+                        <div className="relative w-48 h-12 bg-white/5 rounded-full flex items-center px-2">
                           <div className={`w-8 h-8 rounded-full bg-white transition-transform duration-700 ${isPlaying ? 'translate-x-36' : 'translate-x-0'}`} />
                         </div>
                       )}
@@ -812,16 +812,16 @@ export const PlaygroundSubpage: React.FC = () => {
 
                     {/* Top Video Header Overlay */}
                     <div className="relative z-10 flex justify-between items-start text-[10px] font-mono">
-                      <span className="px-2 py-0.5 rounded bg-black/60 text-white/80 border border-white/10">
+                      <span className="px-2 py-0.5 rounded bg-black/60 text-white/80">
                         {vid.fps} &bull; {vid.duration}
                       </span>
-                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
                         {isPlaying ? 'PLAYING' : 'PAUSED'}
                       </span>
                     </div>
 
                     {/* Bottom Controls Bar */}
-                    <div className="relative z-10 flex justify-between items-center bg-black/60 backdrop-blur-md p-2 rounded-lg border border-white/10">
+                    <div className="relative z-10 flex justify-between items-center bg-black/60 backdrop-blur-md p-2 rounded-lg">
                       <button
                         onClick={() => setPlayingVideoId(isPlaying ? null : vid.id)}
                         className="px-3 py-1 rounded bg-white text-black font-mono text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-neutral-200 transition-colors"
@@ -848,12 +848,12 @@ export const PlaygroundSubpage: React.FC = () => {
                     <h3 className="text-lg font-bold text-white uppercase tracking-tight mb-2">
                       {vid.title}
                     </h3>
-                    <p className="text-xs text-white/70 font-light leading-relaxed mb-4">
+                    <p className="text-xs text-white/70 font-light leading-relaxed mb-3">
                       {vid.desc}
                     </p>
-                    <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/10 text-[10px] font-mono text-white/60">
+                    <div className="flex flex-wrap gap-1.5 text-[10px] font-mono text-white/60">
                       {vid.tags.map((t, idx) => (
-                        <span key={idx} className="px-2 py-0.5 rounded bg-white/5 border border-white/10">
+                        <span key={idx} className="px-2 py-0.5 rounded bg-white/5">
                           {t}
                         </span>
                       ))}

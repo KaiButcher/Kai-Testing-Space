@@ -30,7 +30,10 @@ export const PhotographyBento: React.FC<PhotographyBentoProps> = ({ onExpand }) 
       {/* Background Architectural Photo from Unsplash */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop"
+          src="/assets/photography/warplanes-display.jpg"
+          onError={(e) => {
+            e.currentTarget.src = "https://images.unsplash.com/photo-1751877338999-02175bc6c88c?auto=format&fit=crop&q=80&w=1600";
+          }}
           alt="Kai Butcher Photography"
           referrerPolicy="no-referrer"
           className={`w-full h-full object-cover object-center grayscale contrast-125 transition-all duration-700 ease-out ${
@@ -39,7 +42,7 @@ export const PhotographyBento: React.FC<PhotographyBentoProps> = ({ onExpand }) 
         />
 
         {/* Contrast Gradient Overlay for Typography Legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#121316] via-[#121316]/70 to-[#121316]/40 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#070707] via-[#070707]/70 to-[#070707]/30 pointer-events-none" />
       </div>
 
       <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-20" />
@@ -54,8 +57,8 @@ export const PhotographyBento: React.FC<PhotographyBentoProps> = ({ onExpand }) 
         </div>
 
         <div
-          className={`w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white/80 transition-all duration-300 ${
-            hovered ? 'bg-white text-black border-white scale-110' : 'bg-white/5'
+          className={`w-7 h-7 rounded-full flex items-center justify-center text-white/80 transition-all duration-300 ${
+            hovered ? 'bg-white text-black scale-110' : 'bg-white/10'
           }`}
         >
           <Maximize2 className="w-3.5 h-3.5" />
@@ -76,7 +79,7 @@ export const PhotographyBento: React.FC<PhotographyBentoProps> = ({ onExpand }) 
       </div>
 
       {/* Bottom Profile Link */}
-      <div className="relative z-10 pt-3 border-t border-white/15 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-white/60">
+      <div className="relative z-10 pt-3 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-white/60">
         <span className="tracking-widest">@KAIBUTCHER</span>
         <span className="tracking-widest text-white/90 group-hover:underline flex items-center space-x-1">
           <span>EXPAND SUBPAGE</span>

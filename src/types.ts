@@ -35,5 +35,5 @@ export type ActiveModal =
   | { type: 'terminal' }
   | { type: 'privacy' };
 
-export type BentoPageId = 'space' | 'photo' | 'design' | 'playground' | 'archive' | 'anim';
+export type BentoPageId = 'space' | 'photo' | 'photo2' | 'design' | 'playground' | 'archive' | 'anim';
 

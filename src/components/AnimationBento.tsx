@@ -21,7 +21,7 @@ export const PlaygroundBento: React.FC<PlaygroundBentoProps> = ({ onExpand }) =>
       layoutId="bento-card-playground"
       id="bento-playground"
       onClick={onExpand}
-      className="bento-grey bento-area-anim relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden cursor-pointer select-none group h-full min-h-[260px] sm:min-h-0 hover:bg-[#181a20] transition-colors"
+      className="bento-grey bento-area-anim relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden cursor-pointer select-none group h-full min-h-[260px] sm:min-h-0 hover:bg-white/[0.02] transition-colors"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -32,7 +32,7 @@ export const PlaygroundBento: React.FC<PlaygroundBentoProps> = ({ onExpand }) =>
       }}
       aria-label="Playground Bento - Click to expand subpage"
     >
-      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-30" />
+      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-20" />
 
       {/* Top Meta Header */}
       <div className="relative z-10 flex items-center justify-between w-full">
@@ -44,18 +44,18 @@ export const PlaygroundBento: React.FC<PlaygroundBentoProps> = ({ onExpand }) =>
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-emerald-300 border border-emerald-500/30 tracking-wider flex items-center gap-1">
+          <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-emerald-300 tracking-wider flex items-center gap-1">
             <Sparkles className="w-2.5 h-2.5 text-emerald-400" />
             VIBE CODED
           </span>
-          <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center text-white/60 group-hover:text-white group-hover:border-white/50 group-hover:scale-110 transition-all">
+          <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-white/60 group-hover:text-white group-hover:bg-white/15 group-hover:scale-110 transition-all">
             <Maximize2 className="w-3 h-3" />
           </div>
         </div>
       </div>
 
       {/* Center Typographic & Visual Callout */}
-      <div className="relative z-10 my-auto py-5 flex flex-col justify-center">
+      <div className="relative z-10 my-auto py-4 flex flex-col justify-center">
         <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.25em] text-white/50 uppercase block mb-1">
           CREATIVE LAB &bull; EXPERIMENTS
         </span>
@@ -64,27 +64,27 @@ export const PlaygroundBento: React.FC<PlaygroundBentoProps> = ({ onExpand }) =>
           Playground
         </h2>
 
-        {/* Dynamic Vibe-Coded Categories Strip */}
-        <div className="my-3 py-3 border-y border-white/10 grid grid-cols-3 gap-2">
-          <div className={`p-2 rounded-lg border transition-all ${pulseIdx === 0 ? 'bg-white/10 border-white/40' : 'bg-black/30 border-white/10'}`}>
-            <div className="flex items-center gap-1 text-[10px] font-mono text-white/60 mb-0.5">
-              <Terminal className="w-3 h-3 text-white/80" />
+        {/* Dynamic Vibe-Coded Categories Clean Typography Grid */}
+        <div className="my-3 py-2 grid grid-cols-3 gap-3">
+          <div>
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-white/50 uppercase tracking-wider mb-1">
+              <Terminal className="w-3 h-3 text-white/70" />
               <span>TOOLS</span>
             </div>
             <span className="text-xs sm:text-sm font-mono font-bold text-white">03 APPS</span>
           </div>
 
-          <div className={`p-2 rounded-lg border transition-all ${pulseIdx === 1 ? 'bg-white/10 border-white/40' : 'bg-black/30 border-white/10'}`}>
-            <div className="flex items-center gap-1 text-[10px] font-mono text-white/60 mb-0.5">
-              <ImageIcon className="w-3 h-3 text-white/80" />
+          <div>
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-white/50 uppercase tracking-wider mb-1">
+              <ImageIcon className="w-3 h-3 text-white/70" />
               <span>IMAGES</span>
             </div>
             <span className="text-xs sm:text-sm font-mono font-bold text-white">06 WORKS</span>
           </div>
 
-          <div className={`p-2 rounded-lg border transition-all ${pulseIdx === 2 ? 'bg-white/10 border-white/40' : 'bg-black/30 border-white/10'}`}>
-            <div className="flex items-center gap-1 text-[10px] font-mono text-white/60 mb-0.5">
-              <Film className="w-3 h-3 text-white/80" />
+          <div>
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-white/50 uppercase tracking-wider mb-1">
+              <Film className="w-3 h-3 text-white/70" />
               <span>VIDEOS</span>
             </div>
             <span className="text-xs sm:text-sm font-mono font-bold text-white">04 CLIPS</span>
@@ -97,7 +97,7 @@ export const PlaygroundBento: React.FC<PlaygroundBentoProps> = ({ onExpand }) =>
       </div>
 
       {/* Bottom Coordinates Meta */}
-      <div className="relative z-10 pt-3 border-t border-white/15 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-white/60">
+      <div className="relative z-10 pt-3 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-white/60">
         <span className="tracking-widest">REACT &bull; WEBGL &bull; SHADERS</span>
         <span className="tracking-widest text-white/80 group-hover:underline flex items-center space-x-1">
           <span>OPEN LAB</span>

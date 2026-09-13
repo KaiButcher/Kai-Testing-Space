@@ -2,484 +2,450 @@ import React, { useState } from 'react';
 import { 
   Camera, 
   ExternalLink, 
-  MapPin, 
-  Sliders, 
+  Eye, 
+  Download, 
   Maximize2, 
   X, 
-  Info, 
-  Calendar, 
-  Eye, 
-  Compass, 
-  Layers,
-  ArrowRight
+  ArrowUpRight 
 } from 'lucide-react';
 
-interface PhotoItem {
+interface BentoPhoto {
   id: string;
+  indexStr: string;
   title: string;
-  series: 'Brutalism' | 'Monoliths' | 'Shadow & Light' | 'Terrains';
+  category: string;
   location: string;
-  year: string;
-  camera: string;
-  lens: string;
-  shutter: string;
-  aperture: string;
-  iso: string;
-  filmSensor: string;
-  notes: string;
-  imageUrl: string;
+  views: string;
+  viewsNum: number;
+  downloads: string;
+  downloadsNum: number;
+  unsplashUrl: string;
+  localSrc: string;
+  cdnSrc: string;
+  colSpan: string;
+  aspectClass: string;
 }
 
-const photoCatalog: PhotoItem[] = [
+const bentoPhotos: BentoPhoto[] = [
   {
-    id: 'photo-01',
-    title: 'Barbican South Elevation',
-    series: 'Brutalism',
-    location: 'Barbican Estate, London',
-    year: '2025',
-    camera: 'Leica M10-R',
-    lens: 'Summicron-M 35mm f/2 ASPH',
-    shutter: '1/500s',
-    aperture: 'f/8.0',
-    iso: '100',
-    filmSensor: '40.89MP DNG Raw',
-    notes: 'Textured bush-hammered concrete columns catching raking 9am winter sunlight across the lake terrace.',
-    imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop',
+    id: 'warplanes-display',
+    indexStr: '01',
+    title: 'Bristol Blenheim at Duxford',
+    category: 'Historic Aviation',
+    location: 'Imperial War Museum Duxford, UK',
+    views: '1,144',
+    viewsNum: 1144,
+    downloads: '20',
+    downloadsNum: 20,
+    unsplashUrl: 'https://unsplash.com/photos/warplanes-stand-on-display-in-front-of-a-crowd--fVAm8QQzzg',
+    localSrc: '/assets/photography/warplanes-display.jpg',
+    cdnSrc: 'https://images.unsplash.com/photo-1751877338999-02175bc6c88c?auto=format&fit=crop&q=80&w=1600',
+    colSpan: 'col-span-12 lg:col-span-7',
+    aspectClass: 'aspect-[16/10]',
   },
   {
-    id: 'photo-02',
-    title: 'Monolith Void',
-    series: 'Shadow & Light',
-    location: 'Canary Wharf, London',
-    year: '2025',
-    camera: 'Leica M10-R',
-    lens: 'Elmarit-M 28mm f/2.8',
-    shutter: '1/1000s',
-    aperture: 'f/5.6',
-    iso: '200',
-    filmSensor: 'Monochrome High-Contrast DNG',
-    notes: 'Deep geometric shadow cast between adjacent reflective facades. Captured with 090 deep red glass filter.',
-    imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1600&auto=format&fit=crop',
+    id: 'concrete-cross',
+    indexStr: '02',
+    title: 'Grayscale Photo of Concrete Cross',
+    category: 'Monochrome Memorial',
+    location: 'London, United Kingdom',
+    views: '561,329',
+    viewsNum: 561329,
+    downloads: '3,591',
+    downloadsNum: 3591,
+    unsplashUrl: 'https://unsplash.com/photos/grayscale-photo-of-concrete-cross-0UVEan1xVn0',
+    localSrc: '/assets/photography/concrete-cross.jpg',
+    cdnSrc: 'https://images.unsplash.com/photo-1615200995469-ac4e82a5d05a?auto=format&fit=crop&q=80&w=1600',
+    colSpan: 'col-span-12 sm:col-span-6 lg:col-span-5',
+    aspectClass: 'aspect-[4/3] lg:aspect-[16/10]',
   },
   {
-    id: 'photo-03',
-    title: 'Hayward Gallery Stairs',
-    series: 'Brutalism',
-    location: 'Southbank Centre, London',
-    year: '2024',
-    camera: 'Hasselblad 500C/M',
-    lens: 'Carl Zeiss Planar 80mm f/2.8',
-    shutter: '1/250s',
-    aperture: 'f/11.0',
-    iso: '400',
-    filmSensor: 'Kodak Tri-X 400 (Pushed to 1600)',
-    notes: 'Board-marked shuttered concrete staircase. Grain structure reveals microscopic aggregate composition.',
-    imageUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1600&auto=format&fit=crop',
+    id: 'mechanics-spitfire',
+    indexStr: '03',
+    title: 'Mechanics Prepare Classic Planes for Flight',
+    category: 'Flight Engineering',
+    location: 'Airfield Flight Line, UK',
+    views: '5,266',
+    viewsNum: 5266,
+    downloads: '20',
+    downloadsNum: 20,
+    unsplashUrl: 'https://unsplash.com/photos/mechanics-prepare-classic-planes-for-flight-I_wI4rgaE9Q',
+    localSrc: '/assets/photography/mechanics-spitfire.jpg',
+    cdnSrc: 'https://images.unsplash.com/photo-1751842871197-bcb79ea64069?auto=format&fit=crop&q=80&w=1600',
+    colSpan: 'col-span-12 sm:col-span-6 lg:col-span-4',
+    aspectClass: 'aspect-[4/3]',
   },
   {
-    id: 'photo-04',
-    title: 'Tokyo Transit Monolith',
-    series: 'Monoliths',
-    location: 'Shinjuku, Tokyo',
-    year: '2024',
-    camera: 'Leica M10-R',
-    lens: 'Summilux-M 50mm f/1.4',
-    shutter: '1/125s',
-    aperture: 'f/2.8',
-    iso: '800',
-    filmSensor: 'Low-light Monochrome Raw',
-    notes: 'Overhanging concrete viaduct intersecting elevated highway ramp amidst atmospheric evening drizzle.',
-    imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1600&auto=format&fit=crop',
+    id: 'vintage-biplane',
+    indexStr: '04',
+    title: 'Vintage Airplane on the Runway Ready to Fly',
+    category: 'Vintage Aviation',
+    location: 'Duxford Airfield, UK',
+    views: '3,712',
+    viewsNum: 3712,
+    downloads: '9',
+    downloadsNum: 9,
+    unsplashUrl: 'https://unsplash.com/photos/vintage-airplane-on-the-runway-ready-to-fly-zJBzNMshVf0',
+    localSrc: '/assets/photography/vintage-biplane.jpg',
+    cdnSrc: 'https://images.unsplash.com/photo-1751842925509-313be882efae?auto=format&fit=crop&q=80&w=1600',
+    colSpan: 'col-span-12 sm:col-span-6 lg:col-span-4',
+    aspectClass: 'aspect-[4/3]',
   },
   {
-    id: 'photo-05',
-    title: 'Basalt Hexagons',
-    series: 'Terrains',
-    location: 'Reynisfjara, Iceland',
-    year: '2024',
-    camera: 'Hasselblad 500C/M',
-    lens: 'Distagon 50mm f/4',
-    shutter: '1/60s',
-    aperture: 'f/16.0',
-    iso: '100',
-    filmSensor: 'Ilford Pan F Plus 50',
-    notes: 'Naturally formed volcanic basalt columns rising like organ pipes from crushed black lava sand.',
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop',
+    id: 'crew-fueling-plane',
+    indexStr: '05',
+    title: 'People Preparing a Plane on the Grass',
+    category: 'Flight Line Operations',
+    location: 'Airfield Ground Crew, UK',
+    views: '7,674',
+    viewsNum: 7674,
+    downloads: '84',
+    downloadsNum: 84,
+    unsplashUrl: 'https://unsplash.com/photos/people-preparing-a-plane-on-the-grass-qjgdstFeHiA',
+    localSrc: '/assets/photography/crew-fueling-plane.jpg',
+    cdnSrc: 'https://images.unsplash.com/photo-1751842877382-c7584c5ff864?auto=format&fit=crop&q=80&w=1600',
+    colSpan: 'col-span-12 sm:col-span-6 lg:col-span-4',
+    aspectClass: 'aspect-[4/3]',
   },
   {
-    id: 'photo-06',
-    title: 'National Theatre Cantilever',
-    series: 'Brutalism',
-    location: 'Waterloo, London',
-    year: '2023',
-    camera: 'Leica M6 Classic',
-    lens: 'Summicron-M 35mm f/2',
-    shutter: '1/500s',
-    aperture: 'f/8.0',
-    iso: '400',
-    filmSensor: 'Ilford HP5 Plus (Developed in Rodinal)',
-    notes: 'Denys Lasdun designed interlocking horizontal concrete trays extending towards the River Thames.',
-    imageUrl: 'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=1600&auto=format&fit=crop',
+    id: 'fire-truck-cab',
+    indexStr: '06',
+    title: 'Red, Blue and Yellow Fire Truck',
+    category: 'London Fire Brigade',
+    location: 'London, United Kingdom',
+    views: '61,520',
+    viewsNum: 61520,
+    downloads: '730',
+    downloadsNum: 730,
+    unsplashUrl: 'https://unsplash.com/photos/red-blue-and-yellow-fire-truck-UyAgwgLuS9Q',
+    localSrc: '/assets/photography/fire-truck-cab.jpg',
+    cdnSrc: 'https://images.unsplash.com/photo-1629559618080-8f830e196e72?auto=format&fit=crop&q=80&w=1600',
+    colSpan: 'col-span-12 sm:col-span-6 lg:col-span-6',
+    aspectClass: 'aspect-[16/10]',
   },
   {
-    id: 'photo-07',
-    title: 'Ginza Steel Struts',
-    series: 'Monoliths',
-    location: 'Ginza, Tokyo',
-    year: '2024',
-    camera: 'Leica M10-R',
-    lens: 'Elmarit-M 28mm f/2.8',
-    shutter: '1/750s',
-    aperture: 'f/6.3',
-    iso: '160',
-    filmSensor: 'Monochrome High-Key Raw',
-    notes: 'Precision welded structural steel exoskeleton supporting modern seismic dampers.',
-    imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1600&auto=format&fit=crop',
-  },
-  {
-    id: 'photo-08',
-    title: 'Equinox Shadows',
-    series: 'Shadow & Light',
-    location: 'Battersea Power Station, London',
-    year: '2025',
-    camera: 'Leica M10-R',
-    lens: 'Summicron-M 35mm f/2 ASPH',
-    shutter: '1/1000s',
-    aperture: 'f/9.0',
-    iso: '100',
-    filmSensor: '40.89MP DNG Raw',
-    notes: 'High noon angular shadows cast by brick pilasters forming a rhythm of pure black and bleached cream.',
-    imageUrl: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?q=80&w=1600&auto=format&fit=crop',
-  },
-  {
-    id: 'photo-09',
-    title: 'Nordic Horizon Rift',
-    series: 'Terrains',
-    location: 'Vik, Iceland',
-    year: '2024',
-    camera: 'Hasselblad 500C/M',
-    lens: 'Carl Zeiss Planar 80mm f/2.8',
-    shutter: '1/125s',
-    aperture: 'f/11.0',
-    iso: '100',
-    filmSensor: 'Kodak T-Max 100',
-    notes: 'Minimalist horizon where cold North Atlantic swell collides with pitch-black basalt cliffs in heavy fog.',
-    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600&auto=format&fit=crop',
-  },
-  {
-    id: 'photo-10',
-    title: 'Robin Hood Gardens Fragment',
-    series: 'Brutalism',
-    location: 'Poplar, London',
-    year: '2023',
-    camera: 'Leica M6 Classic',
-    lens: 'Summicron-M 35mm f/2',
-    shutter: '1/250s',
-    aperture: 'f/5.6',
-    iso: '400',
-    filmSensor: 'Kodak Tri-X 400',
-    notes: 'Archival study of Alison and Peter Smithson pre-cast acoustic concrete mullions before demolition.',
-    imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1600&auto=format&fit=crop',
-  },
-  {
-    id: 'photo-11',
-    title: 'Kyoto Concrete Pavilions',
-    series: 'Monoliths',
-    location: 'Kyoto, Japan',
-    year: '2024',
-    camera: 'Leica M10-R',
-    lens: 'Summicron-M 35mm f/2 ASPH',
-    shutter: '1/320s',
-    aperture: 'f/4.0',
-    iso: '250',
-    filmSensor: '40.89MP DNG Raw',
-    notes: 'Tadao Ando inspired smooth formwork concrete with cone tie-holes creating tactile geometric grids.',
-    imageUrl: 'https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?q=80&w=1600&auto=format&fit=crop',
-  },
-  {
-    id: 'photo-12',
-    title: 'Oblique Aperture 04',
-    series: 'Shadow & Light',
-    location: 'City of London, UK',
-    year: '2025',
-    camera: 'Leica M10-R',
-    lens: 'Elmarit-M 28mm f/2.8',
-    shutter: '1/800s',
-    aperture: 'f/8.0',
-    iso: '100',
-    filmSensor: 'Monochrome High-Contrast DNG',
-    notes: 'Razor-sharp diagonal shadow boundary slicing across fluted stone masonry.',
-    imageUrl: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=1600&auto=format&fit=crop',
+    id: 'ealing-fire-station',
+    indexStr: '07',
+    title: 'Red and Yellow Fire Truck Parked Near Building',
+    category: 'Civic Architecture',
+    location: 'Ealing Fire Station, London',
+    views: '157,974',
+    viewsNum: 157974,
+    downloads: '2,586',
+    downloadsNum: 2586,
+    unsplashUrl: 'https://unsplash.com/photos/red-and-yellow-fire-truck-parked-near-building-during-daytime-hwHhdIpJ5P0',
+    localSrc: '/assets/photography/ealing-fire-station.jpg',
+    cdnSrc: 'https://images.unsplash.com/photo-1629559618578-ec27c972a9bc?auto=format&fit=crop&q=80&w=1600',
+    colSpan: 'col-span-12 sm:col-span-6 lg:col-span-6',
+    aspectClass: 'aspect-[16/10]',
   },
 ];
 
 export const PhotographySubpage: React.FC = () => {
-  const [selectedSeries, setSelectedSeries] = useState<string>('All');
-  const [selectedPhoto, setSelectedPhoto] = useState<PhotoItem | null>(null);
+  const [activeLightboxPhoto, setActiveLightboxPhoto] = useState<BentoPhoto | null>(null);
 
-  const seriesList = ['All', 'Brutalism', 'Monoliths', 'Shadow & Light', 'Terrains'];
-
-  const filteredPhotos = selectedSeries === 'All' 
-    ? photoCatalog 
-    : photoCatalog.filter(p => p.series === selectedSeries);
+  const totalViews = bentoPhotos.reduce((sum, p) => sum + p.viewsNum, 0).toLocaleString();
+  const totalDownloads = bentoPhotos.reduce((sum, p) => sum + p.downloadsNum, 0).toLocaleString();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 text-white selection:bg-white selection:text-black">
-      {/* Top Coordinate Header */}
-      <div className="border-b border-white/15 pb-6 mb-8 sm:mb-12 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <Camera className="w-4 h-4 text-white" />
-          <span className="text-xs sm:text-sm font-mono tracking-[0.25em] text-white/80 uppercase">
-            [01] CATALOG &bull; PHOTOGRAPHY ARCHIVE
-          </span>
-        </div>
-
-        <a
-          href="https://unsplash.com/@kaibutcher"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-4 py-2 rounded-lg bg-white text-black font-mono text-xs font-semibold hover:bg-white/90 transition-all flex items-center space-x-2 shadow-lg"
-        >
-          <span>VIEW UNSPLASH (@KAIBUTCHER)</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
-      </div>
-
-      {/* Hero Banner */}
-      <div className="mb-10 sm:mb-12">
-        <span className="text-xs font-mono tracking-[0.25em] text-white/50 uppercase block mb-3">
-          ARCHITECTURAL &bull; BRUTALIST &bull; MONOCHROME
-        </span>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white uppercase leading-[0.95] mb-5">
-          Photography
-        </h1>
-        <p className="text-base sm:text-lg text-white/80 font-normal leading-relaxed max-w-2xl mb-8">
-          Monochrome architectural and spatial captures studying structural mass, shadows, and natural geometry.
-        </p>
-
-        {/* Series Filter Tabs */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-2 no-scrollbar">
-          {seriesList.map((series) => {
-            const count = series === 'All' 
-              ? photoCatalog.length 
-              : photoCatalog.filter(p => p.series === series).length;
-
-            return (
-              <button
-                key={series}
-                onClick={() => setSelectedSeries(series)}
-                className={`px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2 ${
-                  selectedSeries === series
-                    ? 'bg-white text-black font-semibold'
-                    : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/10'
-                }`}
-              >
-                <span>{series}</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded ${
-                  selectedSeries === series ? 'bg-black/20 text-black' : 'bg-white/10 text-white/60'
-                }`}>
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Photo Gallery Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-        {filteredPhotos.map((photo) => (
-          <div
-            key={photo.id}
-            onClick={() => setSelectedPhoto(photo)}
-            className="group bg-[#16181d] border border-white/10 rounded-xl overflow-hidden cursor-pointer hover:border-white/40 transition-all flex flex-col justify-between"
-          >
-            {/* Image Box */}
-            <div className="relative aspect-[4/3] w-full overflow-hidden bg-black">
-              <img
-                src={photo.imageUrl}
-                alt={photo.title}
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover grayscale contrast-125 group-hover:scale-105 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#16181d] via-transparent to-transparent pointer-events-none opacity-60" />
-              
-              <div className="absolute top-3 right-3 px-2 py-1 rounded bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-mono text-white/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center space-x-1">
-                <Eye className="w-3 h-3" />
-                <span>INSPECT EXIF</span>
-              </div>
-            </div>
-
-            {/* Meta Footer */}
-            <div className="p-5 flex flex-col justify-between flex-1">
-              <div>
-                <div className="flex justify-between items-center text-[10px] font-mono text-white/50 mb-1">
-                  <span className="uppercase tracking-widest">{photo.series}</span>
-                  <span>{photo.year}</span>
-                </div>
-                <h3 className="text-lg font-bold text-white uppercase tracking-tight group-hover:text-white transition-colors mb-2">
-                  {photo.title}
-                </h3>
-                <p className="text-xs text-white/60 flex items-center space-x-1 font-mono mb-4">
-                  <MapPin className="w-3 h-3 text-white/40 shrink-0" />
-                  <span className="truncate">{photo.location}</span>
-                </p>
-              </div>
-
-              <div className="pt-3 border-t border-white/10 flex justify-between items-center text-[11px] font-mono text-white/60">
-                <span className="truncate max-w-[180px]">{photo.camera}</span>
-                <span className="text-white/80 group-hover:underline flex items-center space-x-1">
-                  <span>EXIF &rarr;</span>
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Photographic Gear Specs */}
-      <div className="bg-[#14161b] border border-white/10 rounded-2xl p-6 sm:p-8 mb-12">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <span className="text-[10px] sm:text-xs font-mono text-white/50 tracking-widest uppercase block mb-1">
-              OPTICS &amp; EQUIPMENT
+    <div className="w-full min-h-screen bg-[#070707] text-white selection:bg-white selection:text-black">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16">
+        {/* Top Coordinate Header */}
+        <div className="pb-6 mb-8 sm:mb-12 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <Camera className="w-4 h-4 text-white" />
+            <span className="text-xs sm:text-sm font-mono tracking-[0.25em] text-white/80 uppercase">
+              COPYRIGHT FREE &bull; PHOTOGRAPHY FOR EVERYONE
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-tight">
-              Camera Kit
-            </h2>
           </div>
-          <span className="text-xs font-mono text-white/40">35MM &amp; 120 FORMAT</span>
-        </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-          <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
-            <span className="text-[10px] text-white/40 uppercase block mb-1">DIGITAL BODY</span>
-            <h4 className="text-sm font-bold text-white mb-0.5">Leica M10-R</h4>
-            <p className="text-[11px] text-white/60">40.8MP Rangefinder</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
-            <span className="text-[10px] text-white/40 uppercase block mb-1">PRIME LENS</span>
-            <h4 className="text-sm font-bold text-white mb-0.5">Summicron 35mm</h4>
-            <p className="text-[11px] text-white/60">f/2 ASPH Optics</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
-            <span className="text-[10px] text-white/40 uppercase block mb-1">ANALOG BODY</span>
-            <h4 className="text-sm font-bold text-white mb-0.5">Hasselblad 500C/M</h4>
-            <p className="text-[11px] text-white/60">6x6 Medium Format</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
-            <span className="text-[10px] text-white/40 uppercase block mb-1">EMULSIONS</span>
-            <h4 className="text-sm font-bold text-white mb-0.5">Tri-X &amp; HP5+</h4>
-            <p className="text-[11px] text-white/60">Silver Halide B&amp;W</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Photo Inspector Modal (Lightbox) */}
-      {selectedPhoto && (
-        <div
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 md:p-8"
-          onClick={() => setSelectedPhoto(null)}
-        >
-          <div
-            className="relative w-full max-w-5xl bg-[#121316] border border-white/20 rounded-2xl overflow-hidden shadow-2xl flex flex-col lg:flex-row max-h-[92vh]"
-            onClick={(e) => e.stopPropagation()}
+          <a
+            href="https://unsplash.com/@kaibutcher"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 rounded-lg bg-white text-black font-mono text-xs font-semibold hover:bg-neutral-200 transition-all flex items-center space-x-2 shadow-lg"
           >
-            {/* Close Lightbox */}
-            <button
-              onClick={() => setSelectedPhoto(null)}
-              className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-black/70 hover:bg-white text-white hover:text-black transition-all cursor-pointer border border-white/20"
-              title="Close Inspector"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <span>VIEW UNSPLASH (@KAIBUTCHER)</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </div>
 
-            {/* Left Image View */}
-            <div className="lg:w-7/12 bg-black flex items-center justify-center p-4 sm:p-6 overflow-hidden">
-              <img
-                src={selectedPhoto.imageUrl}
-                alt={selectedPhoto.title}
-                referrerPolicy="no-referrer"
-                className="max-h-[50vh] lg:max-h-[75vh] w-auto max-w-full object-contain grayscale contrast-125"
-              />
+        {/* Hero Banner with H1 and Intro Body Copy */}
+        <div className="mb-10 sm:mb-12">
+          <span className="text-xs font-mono tracking-[0.25em] text-white/50 uppercase block mb-3">
+            ARCHITECTURAL &bull; SPATIAL &bull; DOCUMENTARY
+          </span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white uppercase leading-[0.95] mb-5">
+            Photography
+          </h1>
+          <p className="text-base sm:text-lg text-white/80 font-normal leading-relaxed max-w-2xl">
+            I like to share what I've captured, they're usually of things I like. Some you may have seen on the local paper.
+          </p>
+        </div>
+
+        {/* Bento Overview & Telemetry Boxes */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-10 sm:mb-14">
+          {/* Box 1: Total Views */}
+          <div className="bg-[#0e0e0e] border border-white/10 rounded-2xl p-5 sm:p-6 flex flex-col justify-between group hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between text-white/50 text-[10px] font-mono tracking-widest uppercase mb-3">
+              <span>01 &bull; TOTAL VIEWS</span>
+              <Eye className="w-3.5 h-3.5 text-emerald-400" />
             </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white mb-1">
+                {totalViews}
+              </div>
+              <p className="text-xs text-white/50 font-mono">
+                Verified Unsplash impressions
+              </p>
+            </div>
+          </div>
 
-            {/* Right Telemetry Sidebar */}
-            <div className="lg:w-5/12 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto border-t lg:border-t-0 lg:border-l border-white/15">
-              <div>
-                <div className="flex items-center space-x-2 text-[10px] font-mono text-white/50 mb-2">
-                  <span className="px-2 py-0.5 rounded bg-white/10 text-white/90 uppercase">
-                    {selectedPhoto.series}
+          {/* Box 2: Total Downloads */}
+          <div className="bg-[#0e0e0e] border border-white/10 rounded-2xl p-5 sm:p-6 flex flex-col justify-between group hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between text-white/50 text-[10px] font-mono tracking-widest uppercase mb-3">
+              <span>02 &bull; DOWNLOADS</span>
+              <Download className="w-3.5 h-3.5 text-blue-400" />
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white mb-1">
+                {totalDownloads}
+              </div>
+              <p className="text-xs text-white/50 font-mono">
+                Direct global acquisitions
+              </p>
+            </div>
+          </div>
+
+          {/* Box 3: License */}
+          <div className="bg-[#0e0e0e] border border-white/10 rounded-2xl p-5 sm:p-6 flex flex-col justify-between group hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between text-white/50 text-[10px] font-mono tracking-widest uppercase mb-3">
+              <span>03 &bull; LICENSE</span>
+              <Camera className="w-3.5 h-3.5 text-amber-400" />
+            </div>
+            <div>
+              <div className="text-base sm:text-lg font-bold font-mono tracking-tight text-white uppercase mb-1">
+                FREE / CC0
+              </div>
+              <p className="text-xs text-white/50 font-mono">
+                Commercial &amp; personal use
+              </p>
+            </div>
+          </div>
+
+          {/* Box 4: Profile Link */}
+          <a
+            href="https://unsplash.com/@kaibutcher"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#0e0e0e] border border-white/10 rounded-2xl p-5 sm:p-6 flex flex-col justify-between group hover:border-white/30 hover:bg-[#141414] transition-all cursor-pointer"
+          >
+            <div className="flex items-center justify-between text-white/50 text-[10px] font-mono tracking-widest uppercase mb-3">
+              <span>04 &bull; PROFILE</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-white/70 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </div>
+            <div>
+              <div className="text-base sm:text-lg font-bold font-mono tracking-tight text-white uppercase mb-1">
+                @KAIBUTCHER
+              </div>
+              <p className="text-xs text-white/50 font-mono">
+                Curated Unsplash catalog &rarr;
+              </p>
+            </div>
+          </a>
+        </div>
+
+        {/* Bento-Style Image Grid System */}
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 sm:gap-6 lg:gap-7 mb-16">
+          {bentoPhotos.map((photo) => (
+            <div
+              key={photo.id}
+              className={`${photo.colSpan} group relative bg-[#0e0e0e] border border-white/10 hover:border-white/20 rounded-2xl overflow-hidden transition-all duration-300 flex flex-col justify-between shadow-2xl`}
+            >
+              {/* Image Artboard */}
+              <div 
+                onClick={() => setActiveLightboxPhoto(photo)}
+                className={`relative ${photo.aspectClass} w-full overflow-hidden bg-[#070707] cursor-pointer`}
+              >
+                <img
+                  src={photo.localSrc}
+                  alt={photo.title}
+                  onError={(e) => {
+                    // Fallback to Unsplash CDN if local asset path differs
+                    if (e.currentTarget.src !== photo.cdnSrc) {
+                      e.currentTarget.src = photo.cdnSrc;
+                    }
+                  }}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out brightness-95 group-hover:brightness-105"
+                />
+
+                {/* Gradient Vignette */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-transparent to-transparent opacity-80 pointer-events-none" />
+
+                {/* Top Meta Badges */}
+                <div className="absolute top-3.5 left-3.5 right-3.5 flex justify-between items-start pointer-events-none">
+                  <span className="px-2.5 py-1 rounded-md bg-[#070707]/85 backdrop-blur-md text-[10px] font-mono text-white/90 tracking-widest uppercase border border-white/10">
+                    CAPTURE {photo.indexStr}
                   </span>
-                  <span>&bull; {selectedPhoto.year}</span>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveLightboxPhoto(photo);
+                    }}
+                    className="pointer-events-auto p-2 rounded-md bg-[#070707]/85 backdrop-blur-md text-white/70 hover:text-white hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100 border border-white/10"
+                    title="Expand photograph"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Below-Picture Bento Panel with Views, Downloads, and Icon CTA on ONE clean line */}
+              <div className="p-4 sm:p-5 bg-[#0e0e0e] border-t border-white/10 flex flex-col justify-between flex-1">
+                {/* Photo Title & Location */}
+                <div className="mb-3">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[10px] font-mono tracking-[0.2em] text-white/50 uppercase">
+                      {photo.category}
+                    </span>
+                    <span className="text-[10px] font-mono text-white/40 truncate">
+                      {photo.location}
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-white uppercase tracking-tight leading-snug">
+                    {photo.title}
+                  </h3>
                 </div>
 
-                <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-white mb-2">
-                  {selectedPhoto.title}
-                </h2>
+                {/* Telemetry & Icon CTA Row - Strictly on ONE single line */}
+                <div className="pt-2.5 border-t border-white/5 flex items-center justify-between gap-2 whitespace-nowrap">
+                  {/* Views & Downloads Counters from Unsplash */}
+                  <div className="flex items-center gap-3 text-xs font-mono">
+                    <div 
+                      className="flex items-center gap-1 text-white/70 group-hover:text-white transition-colors"
+                      title={`${photo.views} Views on Unsplash`}
+                    >
+                      <Eye className="w-3.5 h-3.5 text-white/40 group-hover:text-emerald-400 transition-colors shrink-0" />
+                      <span className="font-semibold text-white/90">{photo.views}</span>
+                    </div>
 
-                <p className="text-xs text-white/60 flex items-center space-x-1.5 font-mono mb-6">
-                  <MapPin className="w-3.5 h-3.5 text-white/50" />
-                  <span>{selectedPhoto.location}</span>
-                </p>
+                    <span className="text-white/20">&bull;</span>
 
-                <div className="space-y-4 mb-6">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-white/40 block">
-                    OPTICAL EXIF METADATA
-                  </span>
-
-                  <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                    <div className="p-2.5 rounded bg-white/5 border border-white/10">
-                      <span className="text-white/40 block text-[10px]">CAMERA</span>
-                      <span className="text-white font-medium">{selectedPhoto.camera}</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-white/5 border border-white/10">
-                      <span className="text-white/40 block text-[10px]">LENS</span>
-                      <span className="text-white font-medium">{selectedPhoto.lens}</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-white/5 border border-white/10">
-                      <span className="text-white/40 block text-[10px]">SHUTTER</span>
-                      <span className="text-white font-medium">{selectedPhoto.shutter}</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-white/5 border border-white/10">
-                      <span className="text-white/40 block text-[10px]">APERTURE</span>
-                      <span className="text-white font-medium">{selectedPhoto.aperture}</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-white/5 border border-white/10">
-                      <span className="text-white/40 block text-[10px]">ISO</span>
-                      <span className="text-white font-medium">{selectedPhoto.iso}</span>
-                    </div>
-                    <div className="p-2.5 rounded bg-white/5 border border-white/10">
-                      <span className="text-white/40 block text-[10px]">FORMAT</span>
-                      <span className="text-white font-medium">{selectedPhoto.filmSensor}</span>
+                    <div 
+                      className="flex items-center gap-1 text-white/70 group-hover:text-white transition-colors"
+                      title={`${photo.downloads} Downloads on Unsplash`}
+                    >
+                      <Download className="w-3.5 h-3.5 text-white/40 group-hover:text-blue-400 transition-colors shrink-0" />
+                      <span className="font-semibold text-white/90">{photo.downloads}</span>
                     </div>
                   </div>
-                </div>
 
-                <div className="p-4 rounded-lg bg-white/5 border border-white/10 mb-6">
-                  <span className="text-[10px] font-mono text-white/40 uppercase block mb-1">CURATOR FIELD NOTES</span>
-                  <p className="text-xs text-white/80 leading-relaxed font-light">
-                    {selectedPhoto.notes}
-                  </p>
+                  {/* Icon-Only Unsplash CTA Link */}
+                  <a
+                    href={photo.unsplashUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-7 h-7 rounded-lg bg-white/10 group-hover:bg-white text-white/80 group-hover:text-black flex items-center justify-center transition-all duration-200 hover:scale-110 shrink-0"
+                    title="View on Unsplash"
+                    aria-label="View on Unsplash"
+                  >
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </a>
                 </div>
               </div>
+            </div>
+          ))}
+        </div>
 
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                <span className="text-[10px] font-mono text-white/40">ARCHIVE ID // {selectedPhoto.id.toUpperCase()}</span>
-                <a
-                  href="https://unsplash.com/@kaibutcher"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-mono text-white hover:underline flex items-center space-x-1"
-                >
-                  <span>FULL RESOLUTION</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
+        {/* Lightbox / Fullscreen Modal */}
+        {activeLightboxPhoto && (
+          <div
+            className="fixed inset-0 z-50 bg-[#070707]/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 md:p-8"
+            onClick={() => setActiveLightboxPhoto(null)}
+          >
+            <div
+              className="relative w-full max-w-5xl bg-[#0e0e0e] border border-white/15 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setActiveLightboxPhoto(null)}
+                className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-[#070707]/80 hover:bg-white text-white hover:text-black transition-all cursor-pointer border border-white/10"
+                title="Close Inspector"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Modal Image Frame */}
+              <div className="bg-[#070707] flex items-center justify-center p-4 sm:p-6 overflow-hidden max-h-[62vh]">
+                <img
+                  src={activeLightboxPhoto.localSrc}
+                  alt={activeLightboxPhoto.title}
+                  onError={(e) => {
+                    if (e.currentTarget.src !== activeLightboxPhoto.cdnSrc) {
+                      e.currentTarget.src = activeLightboxPhoto.cdnSrc;
+                    }
+                  }}
+                  referrerPolicy="no-referrer"
+                  className="max-h-[56vh] w-auto max-w-full object-contain rounded-lg"
+                />
+              </div>
+
+              {/* Modal Meta & Direct Links */}
+              <div className="p-6 sm:p-8 bg-[#0e0e0e] border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <span className="text-[10px] font-mono text-white/50 tracking-widest uppercase block mb-1">
+                    CAPTURE {activeLightboxPhoto.indexStr} &bull; {activeLightboxPhoto.category} &bull; {activeLightboxPhoto.location}
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-white">
+                    {activeLightboxPhoto.title}
+                  </h3>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-3 text-xs font-mono px-3.5 py-2 rounded-lg bg-white/5 border border-white/10">
+                    <span className="flex items-center gap-1.5 text-white/80">
+                      <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                      <strong>{activeLightboxPhoto.views}</strong> views
+                    </span>
+                    <span className="text-white/20">&bull;</span>
+                    <span className="flex items-center gap-1.5 text-white/80">
+                      <Download className="w-3.5 h-3.5 text-blue-400" />
+                      <strong>{activeLightboxPhoto.downloads}</strong> downloads
+                    </span>
+                  </div>
+
+                  <a
+                    href={activeLightboxPhoto.unsplashUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-5 py-2.5 rounded-lg bg-white text-black font-mono text-xs font-bold hover:bg-neutral-200 transition-all flex items-center space-x-1.5 shadow-lg"
+                  >
+                    <span>OPEN ON UNSPLASH</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
+        )}
+
+        {/* Footer */}
+        <div className="pt-8 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-white/50">
+          <span>01 PHOTOGRAPHY &bull; UNSPLASH ARCHIVE CAPTURES</span>
+          <a 
+            href="https://unsplash.com/@kaibutcher" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-white/80 hover:text-white transition-colors"
+          >
+            CURATED PORTFOLIO // @KAIBUTCHER
+          </a>
         </div>
-      )}
+      </div>
     </div>
   );
 };

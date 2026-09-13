@@ -152,7 +152,7 @@ export const GraphicDesignSubpage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 text-white selection:bg-white selection:text-black">
       {/* Top Coordinate Header */}
-      <div className="border-b border-white/15 pb-6 mb-8 sm:mb-12 flex flex-wrap items-center justify-between gap-4">
+      <div className="pb-6 mb-8 sm:mb-12 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <Layers className="w-4 h-4 text-white" />
           <span className="text-xs sm:text-sm font-mono tracking-[0.25em] text-white/80 uppercase">
@@ -162,7 +162,7 @@ export const GraphicDesignSubpage: React.FC = () => {
 
         <div className="flex items-center space-x-3 text-xs font-mono text-white/60">
           <span>FOUNDATIONS: SWISS 1957 — 2026</span>
-          <span className="px-2.5 py-1 rounded bg-white/10 text-white/90 border border-white/20 text-[11px] font-mono tracking-wider">
+          <span className="px-2.5 py-1 rounded bg-white/10 text-white/90 text-[11px] font-mono tracking-wider">
             STATIC &bull; DYNAMIC
           </span>
         </div>
@@ -179,39 +179,39 @@ export const GraphicDesignSubpage: React.FC = () => {
         <p className="text-base sm:text-lg text-white/80 font-normal leading-relaxed max-w-2xl mb-8">
           Editorial architectures, custom typography, and brand identity systems developed with Swiss modernist structure.
         </p>
+      </div>
 
         {/* View Switcher Tabs */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-2 no-scrollbar">
-          {[
-            { id: 'cases', label: '01 Case Studies' },
-            { id: 'typetester', label: '02 Type Tester' },
-            { id: 'posters', label: '03 Posters' },
-            { id: 'matrix', label: '04 Palette & Grid' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === tab.id
-                  ? 'bg-white text-black font-semibold'
-                  : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/10'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      <div className="flex items-center space-x-2 overflow-x-auto pb-2 mb-12 no-scrollbar">
+        {[
+          { id: 'cases', label: '01 Case Studies' },
+          { id: 'typetester', label: '02 Type Tester' },
+          { id: 'posters', label: '03 Posters' },
+          { id: 'matrix', label: '04 Palette & Grid' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className={`px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === tab.id
+                ? 'bg-white text-black font-semibold'
+                : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* View 1: Case Studies */}
       {activeTab === 'cases' && (
-        <div className="space-y-8 mb-16">
+        <div className="space-y-16 mb-20">
           {caseStudies.map((study) => (
             <div
               key={study.id}
-              className="bg-[#16181d] border border-white/10 rounded-xl p-6 sm:p-8 lg:p-10 hover:border-white/25 transition-all"
+              className="py-4"
             >
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                 {/* Left Overview */}
                 <div className="lg:col-span-7 flex flex-col justify-between">
                   <div>
@@ -224,7 +224,7 @@ export const GraphicDesignSubpage: React.FC = () => {
                         {study.year}
                       </span>
                       <span className="text-white/30">&bull;</span>
-                      <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/10 text-white/90 border border-white/10">
+                      <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/10 text-white/90">
                         {study.client}
                       </span>
                     </div>
@@ -241,7 +241,7 @@ export const GraphicDesignSubpage: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="space-y-3 pt-6 border-t border-white/10 text-xs font-mono">
+                  <div className="space-y-3 pt-6 text-xs font-mono">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                       <span className="text-white/50 uppercase tracking-wider">GRID SPECIFICATION</span>
                       <span className="text-white/90">{study.gridSystem}</span>
@@ -250,7 +250,7 @@ export const GraphicDesignSubpage: React.FC = () => {
                       <span className="text-white/50 uppercase tracking-wider">PRIMARY TYPE STACK</span>
                       <div className="flex flex-wrap gap-1.5">
                         {study.typeStack.map((font, idx) => (
-                          <span key={idx} className="px-2 py-0.5 rounded bg-white/5 text-white/80 border border-white/10">
+                          <span key={idx} className="px-2 py-0.5 rounded bg-white/5 text-white/80">
                             {font}
                           </span>
                         ))}
@@ -260,14 +260,12 @@ export const GraphicDesignSubpage: React.FC = () => {
                 </div>
 
                 {/* Right Visual Representation Box */}
-                <div className="lg:col-span-5 bg-black/60 border border-white/10 rounded-xl p-6 flex flex-col justify-between relative overflow-hidden min-h-[260px]">
-                  <div className="absolute inset-0 bg-matte-noise opacity-20 pointer-events-none" />
-                  
+                <div className="lg:col-span-5 flex flex-col justify-between relative overflow-hidden min-h-[260px]">
                   {/* Stylized Swiss Poster Artboard Preview */}
-                  <div className="relative z-10 border border-white/20 p-5 rounded bg-[#0d0e11] flex flex-col justify-between h-full">
+                  <div className="p-6 rounded-xl bg-white/[0.03] flex flex-col justify-between h-full min-h-[220px]">
                     <div className="flex justify-between items-start">
                       <span className="text-[10px] font-mono tracking-widest text-white/60">FIG. {study.id.toUpperCase()}</span>
-                      <span className="w-3 h-3 border border-white/40" />
+                      <span className="w-2.5 h-2.5 bg-white/60" />
                     </div>
 
                     <div className="my-6">
@@ -284,15 +282,15 @@ export const GraphicDesignSubpage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex justify-between items-center text-[9px] font-mono text-white/50 border-t border-white/15 pt-3">
+                    <div className="flex justify-between items-center text-[9px] font-mono text-white/50 pt-3">
                       <span>SWISS OFFSET PRINT</span>
                       <span>PANTONE REF 877 C</span>
                     </div>
                   </div>
 
-                  <div className="relative z-10 mt-4 flex flex-wrap gap-1.5">
+                  <div className="mt-4 flex flex-wrap gap-1.5">
                     {study.deliverables.map((item, idx) => (
-                      <span key={idx} className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/60 border border-white/10">
+                      <span key={idx} className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/60">
                         {item}
                       </span>
                     ))}
@@ -306,7 +304,7 @@ export const GraphicDesignSubpage: React.FC = () => {
 
       {/* View 2: Interactive Type Tester */}
       {activeTab === 'typetester' && (
-        <div className="bg-[#16181d] border border-white/10 rounded-xl p-6 sm:p-8 lg:p-10 mb-16">
+        <div className="mb-20">
           <div className="mb-8">
             <span className="text-xs font-mono text-white/50 tracking-widest uppercase block mb-1">
               LABORATORY TOOL &bull; COMPUTATIONAL KERNING
@@ -320,7 +318,7 @@ export const GraphicDesignSubpage: React.FC = () => {
           </div>
 
           {/* Controls Panel */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-5 rounded-xl bg-black/50 border border-white/10 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-5 mb-8">
             <div>
               <div className="flex justify-between text-xs font-mono mb-2">
                 <span className="text-white/50">FONT SIZE</span>
@@ -386,7 +384,7 @@ export const GraphicDesignSubpage: React.FC = () => {
           </div>
 
           {/* Quick Preset Phrases */}
-          <div className="flex items-center space-x-2 overflow-x-auto pb-4 mb-4 no-scrollbar">
+          <div className="flex items-center space-x-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
             <span className="text-xs font-mono text-white/40 shrink-0">PRESETS:</span>
             {[
               'SWISS TYPOGRAPHY & RIGOR',
@@ -397,7 +395,7 @@ export const GraphicDesignSubpage: React.FC = () => {
               <button
                 key={idx}
                 onClick={() => setCustomText(phrase)}
-                className="text-xs font-mono px-3 py-1 rounded bg-white/5 hover:bg-white/15 text-white/70 hover:text-white border border-white/10 shrink-0 cursor-pointer"
+                className="text-xs font-mono px-3 py-1 rounded bg-white/5 hover:bg-white/15 text-white/70 hover:text-white shrink-0 cursor-pointer"
               >
                 {phrase}
               </button>
@@ -405,7 +403,7 @@ export const GraphicDesignSubpage: React.FC = () => {
           </div>
 
           {/* Live Editable Canvas */}
-          <div className="bg-[#0d0e11] border border-white/20 rounded-xl p-8 sm:p-12 min-h-[300px] flex flex-col justify-center relative overflow-hidden">
+          <div className="p-8 sm:p-12 min-h-[300px] flex flex-col justify-center relative overflow-hidden bg-white/[0.02] rounded-xl">
             <div className="absolute top-4 left-4 text-[10px] font-mono text-white/30 tracking-widest">
               SAMPLE ARTBOARD // VARIABLE RENDERING
             </div>
@@ -424,7 +422,7 @@ export const GraphicDesignSubpage: React.FC = () => {
               placeholder="Type anything here to test..."
             />
 
-            <div className="mt-8 pt-4 border-t border-white/15 flex flex-wrap justify-between items-center text-xs font-mono text-white/40 gap-2">
+            <div className="mt-8 pt-4 flex flex-wrap justify-between items-center text-xs font-mono text-white/40 gap-2">
               <span>ACTIVE METRICS: {fontSize}PX / {fontWeight} WT / {tracking}EM TRACKING</span>
               <span className="text-white/80">CLICK CANVAS TO TYPE CUSTOM PHRASE</span>
             </div>
@@ -434,14 +432,14 @@ export const GraphicDesignSubpage: React.FC = () => {
 
       {/* View 3: Poster Specimens */}
       {activeTab === 'posters' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {posters.map((poster) => (
             <div
               key={poster.id}
-              className="bg-[#16181d] border border-white/10 rounded-xl p-6 hover:border-white/30 transition-all flex flex-col justify-between group"
+              className="flex flex-col justify-between group"
             >
               {/* Poster Card Artwork */}
-              <div className="aspect-[1/1.414] bg-black border border-white/20 rounded-lg p-6 flex flex-col justify-between mb-5 relative overflow-hidden group-hover:border-white/50 transition-colors">
+              <div className="aspect-[1/1.414] bg-neutral-950 rounded-lg p-6 flex flex-col justify-between mb-5 relative overflow-hidden">
                 <div className="absolute inset-0 bg-matte-noise opacity-25 pointer-events-none" />
                 
                 <div className="relative z-10 flex justify-between items-start">
@@ -459,7 +457,7 @@ export const GraphicDesignSubpage: React.FC = () => {
                   <div className="w-12 h-1 bg-white mt-3" />
                 </div>
 
-                <div className="relative z-10 flex justify-between items-end text-[9px] font-mono text-white/50 border-t border-white/15 pt-2">
+                <div className="relative z-10 flex justify-between items-end text-[9px] font-mono text-white/50 pt-2">
                   <span>{poster.format}</span>
                   <span>SWISS SILKSCREEN</span>
                 </div>
@@ -472,7 +470,7 @@ export const GraphicDesignSubpage: React.FC = () => {
                 <p className="text-xs font-mono text-white/60 mb-3">
                   Stock: {poster.stock}
                 </p>
-                <div className="flex justify-between items-center text-xs font-mono text-white/40 pt-3 border-t border-white/10">
+                <div className="flex justify-between items-center text-xs font-mono text-white/40 pt-2">
                   <span>LIMITED RUN // 50 COPIES</span>
                   <span className="text-white/80 group-hover:underline">ARCHIVED</span>
                 </div>
@@ -484,7 +482,7 @@ export const GraphicDesignSubpage: React.FC = () => {
 
       {/* View 4: Swiss Grid & Color Matrix */}
       {activeTab === 'matrix' && (
-        <div className="bg-[#16181d] border border-white/10 rounded-xl p-6 sm:p-8 lg:p-10 mb-16">
+        <div className="mb-20">
           <div className="mb-8">
             <span className="text-xs font-mono text-white/50 tracking-widest uppercase block mb-1">
               MATHEMATICAL RULES &bull; CHROMATIC CODE
@@ -496,13 +494,13 @@ export const GraphicDesignSubpage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
             {[
-              { name: 'Carbon Pure', hex: '#0D0E11', usage: 'Deep Canvas & Page Floor', text: 'text-white' },
+              { name: 'Carbon Pure', hex: '#000000', usage: 'Deep Canvas & Page Floor', text: 'text-white' },
               { name: 'Matte Charcoal', hex: '#121316', usage: 'Bento Surface & Primary Card', text: 'text-white' },
               { name: 'Card Surface', hex: '#16181D', usage: 'Elevated Cards & Drawers', text: 'text-white' },
-              { name: 'Hairline Stroke', hex: '#2E3238', usage: '1px Dividing Structural Rules', text: 'text-white' },
-              { name: 'Titanium White', hex: '#FFFFFF', usage: 'Display Headings & Hairline Borders', text: 'text-black' },
+              { name: 'Hairline Stroke', hex: '#2E3238', usage: 'Dividing Structural Rules', text: 'text-white' },
+              { name: 'Titanium White', hex: '#FFFFFF', usage: 'Display Headings & Typographic Contrast', text: 'text-black' },
             ].map((swatch, idx) => (
-              <div key={idx} className="p-4 rounded-xl border border-white/15 flex flex-col justify-between min-h-[140px]" style={{ backgroundColor: swatch.hex }}>
+              <div key={idx} className="p-4 rounded-xl flex flex-col justify-between min-h-[140px]" style={{ backgroundColor: swatch.hex }}>
                 <span className={`text-[10px] font-mono tracking-widest uppercase ${swatch.text} opacity-80`}>
                   SWATCH {idx + 1}
                 </span>
@@ -517,7 +515,7 @@ export const GraphicDesignSubpage: React.FC = () => {
             ))}
           </div>
 
-          <div className="p-6 rounded-xl bg-black/50 border border-white/10">
+          <div className="py-6">
             <span className="text-xs font-mono text-white/50 uppercase tracking-widest block mb-2">
               GRID EQUATION
             </span>

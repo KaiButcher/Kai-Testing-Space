@@ -11,10 +11,14 @@ import {
   FileText, 
   Layers, 
   ShieldAlert, 
-  Maximize2
+  Maximize2,
+  Disc,
+  Plane
 } from 'lucide-react';
+import { GrimeArchiveView } from './GrimeArchiveView';
 
 export const ArchiveSubpage: React.FC = () => {
+  const [activeProject, setActiveProject] = useState<'aircraft' | 'grime'>('aircraft');
   const [copiedLink, setCopiedLink] = useState(false);
   const [readerView, setReaderView] = useState<'preview' | 'embed'>('preview');
 
@@ -57,7 +61,7 @@ export const ArchiveSubpage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 text-white selection:bg-white selection:text-black">
       {/* Top Coordinate Header */}
-      <div className="border-b border-white/15 pb-6 mb-8 sm:mb-12 flex flex-wrap items-center justify-between gap-4">
+      <div className="pb-6 mb-8 sm:mb-12 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <Archive className="w-4 h-4 text-white" />
           <span className="text-xs sm:text-sm font-mono tracking-[0.25em] text-white/80 uppercase">
@@ -70,14 +74,14 @@ export const ArchiveSubpage: React.FC = () => {
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             CATALOGUE: RECORD 01 OF EXPANDING SERIES
           </span>
-          <span className="px-2.5 py-1 rounded bg-white/10 text-white/90 border border-white/20 text-[11px] font-mono tracking-wider">
+          <span className="px-2.5 py-1 rounded bg-white/10 text-white/90 text-[11px] font-mono tracking-wider">
             COLLECTION: INTERNET ARCHIVE
           </span>
         </div>
       </div>
 
       {/* Main Title & Context Header */}
-      <div className="mb-10 sm:mb-12">
+      <div className="mb-14 sm:mb-16">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-xs font-mono tracking-[0.28em] text-white/50 uppercase">
             HISTORICAL INDEX &bull; PERMANENT VAULT
@@ -87,39 +91,105 @@ export const ArchiveSubpage: React.FC = () => {
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white uppercase leading-[1.05] mb-5">
-          Archive <span className="text-white/70 block text-2xl sm:text-3xl md:text-4xl font-light mt-1">Books, Images &amp; Historical Documents</span>
+          Archive <span className="text-white/70 block text-2xl sm:text-3xl md:text-4xl font-light mt-1">Books, Media &amp; Cultural Preservations</span>
         </h1>
-        <p className="text-base sm:text-lg text-white/75 font-normal leading-relaxed max-w-3xl">
-          A curated repository preserving rare technical monographs, historical books, architectural ephemera, and visual records. The wartime aircraft identification manual below represents our inaugural catalogued volume in an ongoing archival collection.
+        <p className="text-base sm:text-lg text-white/75 font-normal leading-relaxed max-w-3xl mb-8">
+          A curated repository preserving rare technical monographs, historical books, architectural ephemera, and sound cultures. Select an archival project below to explore the collection.
         </p>
+
+        {/* Project Selector Bar */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-2 rounded-2xl bg-white/[0.03] border border-white/10">
+          <button
+            onClick={() => setActiveProject('aircraft')}
+            className={`p-4 rounded-xl text-left transition-all flex items-start justify-between gap-3 ${
+              activeProject === 'aircraft'
+                ? 'bg-white/15 border border-white/20 shadow-lg text-white'
+                : 'hover:bg-white/5 border border-transparent text-white/70 hover:text-white'
+            }`}
+          >
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Plane className={`w-4 h-4 ${activeProject === 'aircraft' ? 'text-emerald-400' : 'text-white/50'}`} />
+                <span className="text-[10px] font-mono tracking-widest uppercase font-semibold text-emerald-400">
+                  PROJECT 01 &bull; TECHNICAL MONOGRAPH
+                </span>
+              </div>
+              <h3 className="text-lg font-bold uppercase tracking-tight text-white">
+                Aircraft Identification
+              </h3>
+              <p className="text-xs font-mono text-white/60 line-clamp-1">
+                Friend or Foe? (1940) wartime manual &amp; combat aircraft profiles
+              </p>
+            </div>
+            <span className={`px-2 py-1 rounded text-[10px] font-mono whitespace-nowrap ${
+              activeProject === 'aircraft' ? 'bg-emerald-400/20 text-emerald-300 font-bold' : 'bg-white/5 text-white/40'
+            }`}>
+              {activeProject === 'aircraft' ? 'VIEWING' : 'OPEN'}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveProject('grime')}
+            className={`p-4 rounded-xl text-left transition-all flex items-start justify-between gap-3 ${
+              activeProject === 'grime'
+                ? 'bg-amber-400/15 border border-amber-400/30 shadow-lg text-white'
+                : 'hover:bg-white/5 border border-transparent text-white/70 hover:text-white'
+            }`}
+          >
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Disc className={`w-4 h-4 ${activeProject === 'grime' ? 'text-amber-400' : 'text-white/50'}`} />
+                <span className="text-[10px] font-mono tracking-widest uppercase font-semibold text-amber-400">
+                  PROJECT 02 &bull; SOUND &amp; VIDEO ARCHIVE
+                </span>
+              </div>
+              <h3 className="text-lg font-bold uppercase tracking-tight text-white">
+                My Grime Archive
+              </h3>
+              <p className="text-xs font-mono text-white/60 line-clamp-1">
+                Searchable vault of 12,603 tracks, sets, videos &amp; instrumentals
+              </p>
+            </div>
+            <span className={`px-2 py-1 rounded text-[10px] font-mono whitespace-nowrap ${
+              activeProject === 'grime' ? 'bg-amber-400 text-black font-bold' : 'bg-white/5 text-white/40'
+            }`}>
+              {activeProject === 'grime' ? 'VIEWING' : 'OPEN'}
+            </span>
+          </button>
+        </div>
       </div>
 
-      {/* Primary Featured Archive Entry Card */}
-      <div className="bg-[#15171c] border border-white/20 rounded-2xl overflow-hidden shadow-2xl mb-12 relative group">
-        <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-25" />
-
-        {/* Card Header Bar */}
-        <div className="relative z-10 px-6 py-4 bg-white/5 border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
+      {/* Conditionally Render Active Project */}
+      {activeProject === 'grime' ? (
+        <div className="mb-20">
+          <GrimeArchiveView />
+        </div>
+      ) : (
+        <>
+          {/* Primary Featured Archive Entry */}
+          <div className="mb-20">
+        {/* Entry Label Bar */}
+        <div className="py-2 mb-6 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center space-x-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-white" />
+            <div className="w-2 h-2 rounded-full bg-white" />
             <span className="text-xs font-mono tracking-widest text-white/90 uppercase font-bold">
               CATALOGUE ENTRY #01 &bull; BOOK RECORD
             </span>
           </div>
 
           <div className="flex items-center space-x-2 text-xs font-mono">
-            <span className="px-2 py-0.5 rounded bg-white/10 text-white/80 border border-white/15">
+            <span className="px-2 py-0.5 rounded bg-white/10 text-white/80">
               ORIGINAL: 1940
             </span>
-            <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+            <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
               ACTIVE ARCHIVE.ORG LINK
             </span>
           </div>
         </div>
 
-        {/* Card Body */}
-        <div className="relative z-10 p-6 sm:p-8 md:p-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Content Body */}
+        <div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             {/* Left Content Column */}
             <div className="lg:col-span-8">
               <div className="flex items-center gap-2 mb-3 text-xs font-mono text-white/50">
@@ -135,8 +205,8 @@ export const ArchiveSubpage: React.FC = () => {
                 Published by Temple Press Ltd. in 1940 for <em>The Aeroplane</em>, this definitive publication provided essential visual identification guides, photographic plates, dimensional specifications, and silhouette silhouettes of British RAF and German Luftwaffe combat planes to prevent friendly-fire incidents during the second World War.
               </p>
 
-              {/* Exact Archive Link Callout Box */}
-              <div className="bg-black/60 border border-white/15 rounded-xl p-4 sm:p-5 mb-6">
+              {/* Exact Archive Link Callout */}
+              <div className="py-4 mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] sm:text-xs font-mono text-white/50 tracking-widest uppercase flex items-center gap-1.5">
                     <Compass className="w-3 h-3 text-white/70" />
@@ -144,7 +214,7 @@ export const ArchiveSubpage: React.FC = () => {
                   </span>
                   <span className="text-[10px] font-mono text-emerald-400">STATUS: ACTIVE</span>
                 </div>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/5 p-3 rounded-lg">
                   <a
                     href={archiveUrl}
                     target="_blank"
@@ -155,7 +225,7 @@ export const ArchiveSubpage: React.FC = () => {
                   </a>
                   <button
                     onClick={handleCopyLink}
-                    className="shrink-0 inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded bg-white/10 hover:bg-white text-white hover:text-black transition-all text-xs font-mono cursor-pointer border border-white/20"
+                    className="shrink-0 inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded bg-white/10 hover:bg-white text-white hover:text-black transition-all text-xs font-mono cursor-pointer"
                     title="Copy URL to clipboard"
                   >
                     {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -170,7 +240,7 @@ export const ArchiveSubpage: React.FC = () => {
                   href={archiveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-white text-black font-mono font-bold text-xs sm:text-sm tracking-wider uppercase hover:bg-neutral-200 transition-all cursor-pointer shadow-lg group-hover:shadow-white/10"
+                  className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-white text-black font-mono font-bold text-xs sm:text-sm tracking-wider uppercase hover:bg-neutral-200 transition-all cursor-pointer shadow-lg"
                 >
                   <span>Open On Archive.org</span>
                   <ExternalLink className="w-4 h-4" />
@@ -178,10 +248,10 @@ export const ArchiveSubpage: React.FC = () => {
 
                 <button
                   onClick={() => setReaderView(readerView === 'embed' ? 'preview' : 'embed')}
-                  className={`inline-flex items-center space-x-2 px-5 py-3 rounded-xl font-mono text-xs sm:text-sm tracking-wider uppercase transition-all cursor-pointer border ${
+                  className={`inline-flex items-center space-x-2 px-5 py-3 rounded-xl font-mono text-xs sm:text-sm tracking-wider uppercase transition-all cursor-pointer ${
                     readerView === 'embed'
-                      ? 'bg-white/20 text-white border-white/40 shadow-inner'
-                      : 'bg-white/5 text-white/80 hover:text-white hover:bg-white/10 border-white/20'
+                      ? 'bg-white/20 text-white'
+                      : 'bg-white/5 text-white/80 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   <Eye className="w-4 h-4" />
@@ -191,8 +261,8 @@ export const ArchiveSubpage: React.FC = () => {
             </div>
 
             {/* Right Specifications Column */}
-            <div className="lg:col-span-4 bg-black/40 border border-white/10 rounded-xl p-5 sm:p-6 space-y-4 text-xs font-mono">
-              <div className="border-b border-white/10 pb-3">
+            <div className="lg:col-span-4 space-y-4 text-xs font-mono">
+              <div className="pb-3">
                 <span className="text-[10px] text-white/40 uppercase tracking-widest block mb-1">
                   CATALOGUE PROVENANCE
                 </span>
@@ -227,7 +297,7 @@ export const ArchiveSubpage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/10">
+              <div className="pt-3">
                 <a
                   href={archiveUrl}
                   target="_blank"
@@ -243,7 +313,7 @@ export const ArchiveSubpage: React.FC = () => {
 
           {/* Embedded Internet Archive Book Reader View */}
           {readerView === 'embed' && (
-            <div className="mt-8 pt-8 border-t border-white/15">
+            <div className="mt-10 pt-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2 text-xs font-mono">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -262,7 +332,7 @@ export const ArchiveSubpage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="w-full h-[650px] sm:h-[750px] bg-black rounded-xl overflow-hidden border border-white/20 relative shadow-2xl">
+              <div className="w-full h-[650px] sm:h-[750px] bg-[#070707] rounded-xl overflow-hidden relative shadow-2xl">
                 <iframe
                   src={embedUrl}
                   title="Aircraft Identification - Friend or Foe? Part One"
@@ -276,8 +346,8 @@ export const ArchiveSubpage: React.FC = () => {
       </div>
 
       {/* Historical Recognition Aircraft Matrix */}
-      <div className="mb-12">
-        <div className="border-b border-white/15 pb-4 mb-6 flex items-center justify-between">
+      <div className="mb-20">
+        <div className="pb-4 mb-8 flex items-center justify-between">
           <div>
             <span className="text-[10px] sm:text-xs font-mono tracking-[0.25em] text-white/50 uppercase block mb-1">
               HISTORICAL TAXONOMY &bull; 1940 MANUAL SPECIFICATION
@@ -291,18 +361,18 @@ export const ArchiveSubpage: React.FC = () => {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {aircraftCatalogue.map((section, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-2xl bg-[#14161a] border border-white/10 flex flex-col justify-between"
+              className="flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
+                <div className="flex items-center justify-between pb-3 mb-4">
                   <span className="text-xs font-mono font-bold tracking-widest text-white uppercase">
                     {section.side}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/60 border border-white/10">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/60">
                     {section.tag}
                   </span>
                 </div>
@@ -311,7 +381,7 @@ export const ArchiveSubpage: React.FC = () => {
                   {section.models.map((plane, pIdx) => (
                     <div
                       key={pIdx}
-                      className="p-3.5 rounded-xl bg-black/40 border border-white/5 hover:border-white/20 transition-colors"
+                      className="py-3"
                     >
                       <div className="flex items-baseline justify-between mb-1">
                         <h4 className="text-sm font-bold text-white uppercase">
@@ -336,62 +406,74 @@ export const ArchiveSubpage: React.FC = () => {
           ))}
         </div>
       </div>
+        </>
+      )}
 
-      {/* Archival Collection Pipeline (One of many to come) */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-[#14161b] border border-white/10 mb-12">
-        <div className="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-white/10">
+      {/* Archival Collection Pipeline */}
+      <div className="mb-20">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6">
           <div>
             <span className="text-[10px] sm:text-xs font-mono tracking-[0.22em] text-white/50 uppercase block mb-1">
               EXPANDING COLLECTION &bull; DIGITAL REPOSITORY
             </span>
             <h4 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-white">
-              Archived Volumes &amp; Image Series in Curation
+              Archived Volumes &amp; Preserved Collections
             </h4>
           </div>
-          <span className="text-xs font-mono px-2.5 py-1 rounded bg-white/5 border border-white/10 text-white/70">
-            RECORD #01 CATALOGUED &bull; ADDITIONAL WORKS IN PREPARATION
+          <span className="text-xs font-mono px-2.5 py-1 rounded bg-white/5 text-white/70">
+            2 PROJECTS ACTIVE &bull; EXPANDING VAULT
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
-          <div className="p-4 rounded-xl bg-black/40 border border-emerald-500/30 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs font-mono">
+          <div 
+            onClick={() => setActiveProject('aircraft')}
+            className={`p-4 rounded-xl cursor-pointer transition-all ${
+              activeProject === 'aircraft' ? 'bg-white/10 border border-white/20' : 'bg-white/[0.03] hover:bg-white/[0.06] border border-white/5'
+            }`}
+          >
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] text-emerald-400 font-bold uppercase">ENTRY #01 &bull; CATALOGUED</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             </div>
             <h5 className="text-sm font-bold text-white mb-1">Aircraft Identification: Friend or Foe?</h5>
             <p className="text-[11px] text-white/60 font-light leading-relaxed mb-3">
-              1940 Temple Press manual with direct archive.org digitization and interactive reader.
+              1940 wartime identification manual with original digital scan and combat aircraft specs.
             </p>
-            <span className="text-[10px] text-emerald-300/80 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-              AVAILABLE NOW
+            <span className="text-[10px] text-emerald-300/80 bg-emerald-500/10 px-2 py-0.5 rounded">
+              {activeProject === 'aircraft' ? 'NOW VIEWING' : 'CLICK TO VIEW'}
             </span>
           </div>
 
-          <div className="p-4 rounded-xl bg-black/20 border border-white/10 opacity-75">
+          <div 
+            onClick={() => setActiveProject('grime')}
+            className={`p-4 rounded-xl cursor-pointer transition-all ${
+              activeProject === 'grime' ? 'bg-amber-400/10 border border-amber-400/30' : 'bg-white/[0.03] hover:bg-white/[0.06] border border-white/5'
+            }`}
+          >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] text-white/40 uppercase">ENTRY #02 &bull; QUEUED</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400/60" />
+              <span className="text-[10px] text-amber-400 font-bold uppercase">ENTRY #02 &bull; CATALOGUED</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
             </div>
-            <h5 className="text-sm font-bold text-white/80 mb-1">Historical Photographic Plates</h5>
-            <p className="text-[11px] text-white/50 font-light leading-relaxed mb-3">
-              Monochrome spatial studies, medium-format negatives, and archival architectural contact sheets.
+            <h5 className="text-sm font-bold text-white mb-1">My Grime Archive</h5>
+            <p className="text-[11px] text-white/60 font-light leading-relaxed mb-3">
+              Searchable audio, DVD rips, instrumentals &amp; radio sets backed up to Google Drive (540+ items).
             </p>
-            <span className="text-[10px] text-white/40 bg-white/5 px-2 py-0.5 rounded border border-white/10">
-              IN CURATION
+            <span className="text-[10px] text-amber-300/80 bg-amber-500/10 px-2 py-0.5 rounded">
+              {activeProject === 'grime' ? 'NOW VIEWING' : 'CLICK TO VIEW'}
             </span>
           </div>
 
-          <div className="p-4 rounded-xl bg-black/20 border border-white/10 opacity-75">
+          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 opacity-75">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] text-white/40 uppercase">ENTRY #03 &bull; QUEUED</span>
               <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
             </div>
             <h5 className="text-sm font-bold text-white/80 mb-1">Technical Manuals &amp; Ephemera</h5>
             <p className="text-[11px] text-white/50 font-light leading-relaxed mb-3">
-              Mid-century industrial guides, typographic specimen sheets, and early computer interface treatises.
+              Mid-century industrial guides, typographic specimen sheets, and early computing interface treatises.
             </p>
-            <span className="text-[10px] text-white/40 bg-white/5 px-2 py-0.5 rounded border border-white/10">
+            <span className="text-[10px] text-white/40 bg-white/5 px-2 py-0.5 rounded">
               IN DIGITISATION
             </span>
           </div>

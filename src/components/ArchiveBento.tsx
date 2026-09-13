@@ -12,7 +12,7 @@ export const ArchiveBento: React.FC<ArchiveBentoProps> = ({ onExpand }) => {
       layoutId="bento-card-archive"
       id="bento-archive"
       onClick={onExpand}
-      className="bento-grey bento-area-archive relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden cursor-pointer select-none group h-full min-h-[220px] sm:min-h-0 hover:bg-[#181a20] transition-colors"
+      className="bento-grey bento-area-archive relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden cursor-pointer select-none group h-full min-h-[220px] sm:min-h-0 hover:bg-white/[0.02] transition-colors"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -23,7 +23,7 @@ export const ArchiveBento: React.FC<ArchiveBentoProps> = ({ onExpand }) => {
       }}
       aria-label="Archive Bento - Click to expand subpage"
     >
-      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-30" />
+      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-20" />
 
       {/* Top Meta Line */}
       <div className="relative z-10 flex items-center justify-between w-full">
@@ -37,10 +37,10 @@ export const ArchiveBento: React.FC<ArchiveBentoProps> = ({ onExpand }) => {
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/10 tracking-wider">
-            BOOKS &amp; IMAGES
+          <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/70 tracking-wider">
+            2 ACTIVE PROJECTS
           </span>
-          <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center text-white/60 group-hover:text-white group-hover:border-white/50 group-hover:scale-110 transition-all">
+          <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-white/60 group-hover:text-white group-hover:bg-white/15 group-hover:scale-110 transition-all">
             <Maximize2 className="w-3 h-3" />
           </div>
         </div>
@@ -57,24 +57,31 @@ export const ArchiveBento: React.FC<ArchiveBentoProps> = ({ onExpand }) => {
             Archive
           </h2>
           <p className="text-xs sm:text-sm font-normal text-white/70 max-w-md leading-relaxed mb-3">
-            Curated repository of historical monographs, technical ephemera, preserved books, and visual documentation.
+            Preserved historical monographs, combat aircraft manuals, and digital sound/video vaults.
           </p>
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-white/80">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span className="text-white/50 uppercase">INDEXED:</span>
-            <span className="truncate max-w-[260px] sm:max-w-xs">Aircraft Identification (1940)</span>
+          <div className="flex flex-wrap items-center gap-3 text-[10px] font-mono text-white/80 pt-1">
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="text-white/60">01:</span>
+              <span className="truncate">Aircraft ID (1940)</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              <span className="text-amber-400/80">02:</span>
+              <span className="truncate">My Grime Archive (12,603 Items)</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bottom Specs Line */}
-      <div className="relative z-10 pt-3 border-t border-white/15 flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-xs">
+      <div className="relative z-10 pt-3 flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-xs">
         <div className="flex items-center space-x-2">
           <span className="text-white/40 font-mono tracking-widest text-[10px]">MEDIA:</span>
-          {['BOOKS', 'IMAGES', 'EPHEMERA'].map((tag, i) => (
+          {['BOOKS', 'AUDIO', 'VIDEO', 'EPHEMERA'].map((tag, i) => (
             <span
               key={i}
-              className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/80 border border-white/10 tracking-wide uppercase"
+              className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/80 tracking-wide uppercase"
             >
               {tag}
             </span>

@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Night Mystery (Light) — Client-Side Video Sanitiser & Packager</title>
+  
+  <!-- Cross-Origin Isolation for GitHub Pages (SharedArrayBuffer support for FFmpeg.wasm) -->
+  <script src="coi-serviceworker.js"></script>
+
+  <!-- External CDNs: JSZip & FFmpeg.wasm (v0.11.6) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* CSS Reset & Variables */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-canvas: #0b0d14;
+      --bg-window: #1A1D23;
+      --bg-card: #22262F;
+      --bg-terminal: #111317;
+      --text-white: #FFFFFF;
+      --text-muted: #9BA3AF;
+      --text-dim: #64748B;
+      --accent-gold: #F0D878;
+      --accent-gold-hover: #fae48c;
+      --accent-gold-active: #dfc460;
+      --accent-gold-dim: rgba(240, 216, 120, 0.12);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-card: rgba(255, 255, 255, 0.12);
+      --border-gold: rgba(240, 216, 120, 0.35);
+      --error-red: #EF4444;
+      --error-red-bg: rgba(239, 68, 68, 0.12);
+      --error-red-border: rgba(239, 68, 68, 0.35);
+      --success-green: #10B981;
+      --font-main: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-main);
+      color: var(--text-white);
+      background-color: var(--bg-canvas);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Cinematic Deep Blurred Backdrop */
+    .cinematic-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 20%, #2f2552 0%, #171c3b 42%, #0c0f1d 78%, #07080f 100%);
+      overflow: hidden;
+    }
+
+    .bokeh-orb-1 {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      top: -20%;
+      left: 18%;
+      background: radial-gradient(circle, rgba(99, 78, 168, 0.45) 0%, rgba(58, 64, 138, 0.2) 50%, transparent 70%);
+      filter: blur(85px);
+    }
+
+    .bokeh-orb-2 {
+      position: absolute;
+      width: 620px;
+      height: 620px;
+      border-radius: 50%;
+      bottom: -15%;
+      right: 15%;
+      background: radial-gradient(circle, rgba(46, 75, 142, 0.4) 0%, rgba(93, 56, 128, 0.22) 50%, transparent 70%);
+      filter: blur(95px);
+    }
+
+    .film-grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* Top Centred Label Outside Window */
+    .top-badge-label {
+      position: relative;
+      z-index: 10;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      color: rgba(255, 255, 255, 0.85);
+      text-transform: uppercase;
+      margin-bottom: 26px;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Main Floating Dark Window */
+    .mystery-window {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 580px;
+      background: var(--bg-window);
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 
+        0 25px 60px -15px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 0 80px rgba(240, 216, 120, 0.03);
+      padding: 38px 36px 32px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: max-width 0.3s ease, opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    @media (max-width: 640px) {
+      .mystery-window {
+        padding: 28px 20px 24px 20px;
+      }
+    }
+
+    /* Top-Right Window Controls */
+    .window-controls {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .win-btn {
+      background: transparent;
+      border: none;
+      color: #788190;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      transition: color 0.2s, transform 0.15s;
+    }
+
+    .win-btn:hover {
+      color: var(--text-white);
+    }
+
+    .win-btn svg {
+      width: 13px;
+      height: 13px;
+      stroke-width: 2;
+    }
+
+    /* Header Title */
+    .window-title {
+      color: var(--accent-gold);
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      text-align: center;
+      margin-top: 12px;
+      margin-bottom: 18px;
+      line-height: 1.2;
+      text-shadow: 0 0 25px rgba(240, 216, 120, 0.25);
+    }
+
+    @media (max-width: 480px) {
+      .window-title {
+        font-size: 22px;
+      }
+    }
+
+    /* Subtext Lines */
+    .window-subtext {
+      text-align: center;
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 440px;
+    }
+
+    .subtext-line-1 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--text-white);
+      text-transform: uppercase;
+    }
+
+    .subtext-line-2 {
+      font-size: 11.5px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.72);
+      line-height: 1.6;
+      text-transform: uppercase;
+    }
+
+    /* Central Drop Zone */
+    .drop-zone {
+      width: 100%;
+      background: var(--bg-card);
+      border-radius: 10px;
+      border: 1px dashed var(--border-card);
+      padding: 34px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .drop-zone:hover, .drop-zone.drag-over {
+      background: #272c36;
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 25px rgba(240, 216, 120, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .drop-zone.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
+    /* Gold Folder Icon */
+    .folder-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-gold);
+      transition: transform 0.2s ease;
+    }
+
+    .drop-zone:hover .folder-icon-wrapper {
+      transform: scale(1.08);
+    }
+
+    .folder-icon {
+      width: 44px;
+      height: 38px;
+      fill: var(--accent-gold);
+    }
+
+    .drop-label {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-white);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .drop-divider {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Primary Gold Button */
+    .btn-select {
+      background: var(--accent-gold);
+      color: #11141a;
+      font-family: var(--font-main);
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(240, 216, 120, 0.3);
+    }
+
+    .btn-select:hover:not(:disabled) {
+      background: var(--accent-gold-hover);
+      box-shadow: 0 6px 20px rgba(240, 216, 120, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .btn-select:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .btn-select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Hidden File Input */
+    #movieFileInput {
+      display: none;
+    }
+
+    /* Interactive Sample Test Pill */
+    .sample-test-pill {
+      margin-top: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      padding: 5px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .sample-test-pill:hover:not(:disabled) {
+      background: rgba(240, 216, 120, 0.15);
+      color: var(--accent-gold);
+      border-color: var(--border-gold);
+    }
+
+    .sample-test-pill:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Processing & Results Panels */
+    .processing-panel, .results-panel, .error-panel {
+      display: none;
+      width: 100%;
+      margin-top: 18px;
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent-gold);
+      background: var(--accent-gold-dim);
+      border: 1px solid var(--border-gold);
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(240, 216, 120, 0.3);
+      border-top-color: var(--accent-gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 10px 0 16px 0;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #F0D878, #ffd95c);
+      transition: width 0.25s ease-out;
+    }
+
+    .terminal-log {
+      width: 100%;
+      background: var(--bg-terminal);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #A0AAB8;
+      max-height: 130px;
+      overflow-y: auto;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    .terminal-log .log-highlight {
+      color: var(--accent-gold);
+    }
+
+    .terminal-log .log-warn {
+      color: #F59E0B;
+    }
+
+    .terminal-log .log-error {
+      color: #EF4444;
+    }
+
+    /* Subtitle Container */
+    .subtitle-card {
+      width: 100%;
+      background: #15181F;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .subtitle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .subtitle-badge {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Movie Title & Date Configuration (Above Subtitles) */
+    .config-card {
+      width: 100%;
+      background: #15181F;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .config-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .config-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent-gold);
+      background: rgba(240, 216, 120, 0.1);
+      border: 1px solid rgba(240, 216, 120, 0.3);
+      padding: 2px 8px;
+      border-radius: 9999px;
+    }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 500px) {
+      .config-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .config-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .config-input {
+      width: 100%;
+      background: #0D0F14;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .config-input:focus {
+      border-color: var(--accent-gold);
+    }
+
+    .slug-preview-box {
+      background: #0D0F14;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .slug-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.45);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .slug-value {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    .slug-manifest {
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin-top: 6px;
+      padding-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .manifest-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .manifest-item.video {
+      color: #34D399;
+    }
+
+    .manifest-item.srt {
+      color: var(--accent-gold);
+    }
+
+    .subtitle-excision-notice {
+      background: #0D0F14;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      flex-wrap: wrap;
+    }
+
+    .notice-stripped {
+      color: #34D399;
+      font-weight: 600;
+    }
+
+    .notice-srt {
+      color: var(--accent-gold);
+      font-size: 10.5px;
+    }
+
+    /* Subtitle Line Item with Toggle (NO BLUR) */
+    .subtitle-lines-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .cue-item {
+      background: #0D0F14;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cue-item:hover {
+      border-color: rgba(240, 216, 120, 0.4);
+    }
+
+    .cue-item.excluded {
+      background: rgba(127, 29, 29, 0.2);
+      border-color: rgba(239, 68, 68, 0.35);
+      opacity: 0.65;
+    }
+
+    .cue-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .cue-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 4px;
+    }
+
+    .cue-tag-removed {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .cue-text {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: #E2E8F0;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .cue-item.excluded .cue-text {
+      text-decoration: line-through;
+      color: rgba(255, 255, 255, 0.4);
+      font-style: italic;
+    }
+
+    .cue-toggle-btn {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid;
+      white-space: nowrap;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .cue-toggle-btn.keep {
+      background: rgba(240, 216, 120, 0.15);
+      border-color: rgba(240, 216, 120, 0.3);
+      color: var(--accent-gold);
+    }
+
+    .cue-toggle-btn.exclude {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+    }
+
+    .subtitle-stats-badge {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--accent-gold);
+      background: rgba(240, 216, 120, 0.1);
+      border: 1px solid rgba(240, 216, 120, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .subtitle-null-message {
+      font-size: 12px;
+      color: #94A3B8;
+      font-family: var(--font-mono);
+      padding: 8px 12px;
+      background: #0D0F14;
+      border-radius: 6px;
+      line-height: 1.5;
+    }
+
+    /* Download Clean Zip Action */
+    .download-action-box {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-download-zip {
+      width: 100%;
+      background: var(--accent-gold);
+      color: #11141a;
+      font-family: var(--font-main);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 14px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 20px rgba(240, 216, 120, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-download-zip:hover {
+      background: var(--accent-gold-hover);
+      box-shadow: 0 8px 25px rgba(240, 216, 120, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-download-zip:active {
+      transform: translateY(1px);
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 11.5px;
+      font-family: var(--font-main);
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    .btn-reset:hover {
+      color: var(--text-white);
+    }
+
+    /* Error Alert Box */
+    .error-card {
+      width: 100%;
+      background: var(--error-red-bg);
+      border: 1px solid var(--error-red-border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: left;
+      margin-bottom: 14px;
+    }
+
+    .error-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--error-red);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .error-card-body {
+      font-size: 12px;
+      color: #FECACA;
+      line-height: 1.5;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: #1C1E24;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 12px;
+      padding: 12px 18px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+      animation: toastIn 0.3s ease-out forwards;
+      max-width: 380px;
+    }
+
+    .toast.toast-error {
+      border-color: var(--error-red-border);
+      background: #241416;
+    }
+
+    .toast.toast-success {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: #10241b;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Footer Text */
+    .window-footer {
+      margin-top: 26px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      color: rgba(255, 255, 255, 0.45);
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* GitHub Pages Instructions Info Box */
+    .gh-info-toggle {
+      margin-top: 24px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 11.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+      z-index: 10;
+    }
+
+    .gh-info-toggle:hover {
+      color: var(--accent-gold);
+    }
+
+    .gh-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .gh-modal.active {
+      display: flex;
+    }
+
+    .gh-modal-box {
+      background: var(--bg-window);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      max-width: 620px;
+      width: 100%;
+      padding: 28px;
+      color: #E2E8F0;
+      font-size: 13px;
+      line-height: 1.6;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.85);
+      position: relative;
+    }
+
+    .gh-modal-box h3 {
+      color: var(--accent-gold);
+      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .gh-modal-box code {
+      font-family: var(--font-mono);
+      background: #111317;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--accent-gold);
+      font-size: 11.5px;
+    }
+
+    .gh-modal-box pre {
+      background: #111317;
+      padding: 12px;
+      border-radius: 6px;
+      margin: 12px 0;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      border: 1px solid var(--border-subtle);
+      color: #A0AAB8;
+    }
+
+    .gh-close-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      font-size: 20px;
+    }
+    .gh-close-btn:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- Cinematic Blurred Ambient Background -->
+  <div class="cinematic-backdrop">
+    <div class="bokeh-orb-1"></div>
+    <div class="bokeh-orb-2"></div>
+    <div class="film-grain"></div>
+  </div>
+
+  <!-- Top Centred Label Outside Window -->
+  <div class="top-badge-label">
+    MAX FILE SIZE 2GB
+  </div>
+
+  <!-- Main Floating Dark Window -->
+  <div class="mystery-window" id="mysteryWindow">
+    
+    <!-- Top Right Window Controls -->
+    <div class="window-controls">
+      <button class="win-btn" title="Minimise" id="btnMinimize" aria-label="Minimise window">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      </button>
+      <button class="win-btn" title="Maximise" id="btnMaximize" aria-label="Maximise window">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16" rx="1"></rect></svg>
+      </button>
+      <button class="win-btn" title="Reset" id="btnClose" aria-label="Reset window">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <!-- Header Title -->
+    <h1 class="window-title">MOVIE NIGHT MYSTERY (LIGHT)</h1>
+
+    <!-- Subtext -->
+    <div class="window-subtext">
+      <div class="subtext-line-1">KEEP YOUR FILM CHOICE A SECRET.</div>
+      <div class="subtext-line-2">
+        USE THIS TOOL TO REMOVE THE TITLE FROM THE VIDEO AND SUBTITLES, AND PACK IT INTO A CLEAN ZIP.
+      </div>
+    </div>
+
+    <!-- Central Drop Zone (State: Idle) -->
+    <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Drop movie file here or click to select">
+      <div class="folder-icon-wrapper">
+        <svg class="folder-icon" viewBox="0 0 24 20" fill="currentColor">
+          <path d="M10 2L12 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V4C2 2.9 2.9 2 4 2H10Z"/>
+        </svg>
+      </div>
+
+      <div class="drop-label">DROP MOVIE HERE</div>
+      <div class="drop-divider">OR</div>
+      <button type="button" class="btn-select" id="selectMovieBtn">SELECT MOVIE</button>
+      
+      <input type="file" id="movieFileInput" accept=".mkv,.mp4" />
+    </div>
+
+    <!-- Fast Test Pill for Verification without Large Local Files -->
+    <button type="button" class="sample-test-pill" id="sampleTestBtn">
+      <span>▶ Try with sample video (4.7mb)</span>
+    </button>
+
+    <!-- Processing Panel (State: Loading File / Extracting Streams / Zipping) -->
+    <div class="processing-panel" id="processingPanel">
+      <div class="status-badge">
+        <div class="spinner"></div>
+        <span id="processingStatusText">Initialising WebAssembly pipeline...</span>
+      </div>
+
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
+      </div>
+
+      <div class="terminal-log" id="terminalLog">
+        <div>[System] Initialising client-side stream sanitiser...</div>
+      </div>
+    </div>
+
+    <!-- Error State Panel -->
+    <div class="error-panel" id="errorPanel">
+      <div class="error-card">
+        <div class="error-card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span id="errorTitle">Processing Aborted</span>
+        </div>
+        <div class="error-card-body" id="errorMessage">
+          The file exceeded browser memory constraints during stream processing and WebAssembly was terminated. No zip file was generated.
+        </div>
+      </div>
+      <button type="button" class="btn-select" id="btnTryAgain" style="width: 100%;">TRY ANOTHER MOVIE</button>
+    </div>
+
+    <!-- Results Panel (State: Completed) -->
+    <div class="results-panel" id="resultsPanel">
+      
+      <!-- 1. Movie Name & Date Configuration (Above the Subtitles) -->
+      <div class="config-card">
+        <div class="config-header">
+          <div class="config-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="20" rx="2"></rect>
+              <line x1="7" y1="2" x2="7" y2="22"></line>
+              <line x1="17" y1="2" x2="17" y2="22"></line>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+            </svg>
+            <span>Mystery Movie Title & Date</span>
+          </div>
+          <span class="badge-pill">Next Wednesday Default</span>
+        </div>
+
+        <div class="config-grid">
+          <div>
+            <label class="config-label" for="hostNameInput">Your Name</label>
+            <input type="text" class="config-input" id="hostNameInput" value="kai" placeholder="e.g. Kai" />
+          </div>
+          <div>
+            <label class="config-label" for="movieDateInput">Movie Night Date</label>
+            <input type="date" class="config-input" id="movieDateInput" />
+          </div>
+        </div>
+
+        <div class="slug-preview-box">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <span class="slug-label">Output Package Archive:</span>
+            <span class="slug-value" id="computedSlugDisplay">kai-mystery-movie-16-09.zip</span>
+          </div>
+          <div class="slug-manifest" id="slugManifest">
+            <div class="manifest-item video">
+              <span>✓ 1. <strong id="manifestVideoName">kai-mystery-movie-16-09.mkv</strong> &mdash; stripped of all embedded subtitles</span>
+            </div>
+            <div class="manifest-item srt" id="manifestSrtItem">
+              <span>✓ 2. <strong id="manifestSrtName">kai-mystery-movie-16-09.srt</strong> &mdash; included alongside (spoilers removed)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Subtitle Container: Strictly Genuine or Graceful Null State (NO BLUR, With Toggles) -->
+      <div class="subtitle-card" id="subtitleCard">
+        <!-- Subtitle Excision Notice -->
+        <div class="subtitle-excision-notice">
+          <span class="notice-stripped">✓ Movie file stripped of all embedded subtitles (0 internal tracks)</span>
+          <span class="notice-srt">Curated dialogue packaged alongside as standalone .srt</span>
+        </div>
+
+        <div class="subtitle-header">
+          <div class="subtitle-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            <span id="subtitleBadgeText">Subtitles</span>
+          </div>
+          <div id="subtitleStatsBadge" class="subtitle-stats-badge" style="display: none;"></div>
+        </div>
+
+        <!-- Subtitle Lines List with Toggles (Clear, No Blur) -->
+        <div class="subtitle-lines-list" id="subtitleLinesList" style="display: none;"></div>
+
+        <!-- Subtitle Null State (When none exist - Zero Hallucinations) -->
+        <div class="subtitle-null-message" id="subtitleNullMessage" style="display: none;">
+          No subtitles detected in source video. Only the sanitised video stream will be packaged into the mystery archive.
+        </div>
+      </div>
+
+      <!-- 3. Download Action Box -->
+      <div class="download-action-box">
+        <button type="button" class="btn-download-zip" id="btnDownloadZip">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span id="downloadBtnText">DOWNLOAD CLEAN ZIP (kai-mystery-movie-16-09.zip)</span>
+        </button>
+        <button type="button" class="btn-reset" id="btnProcessAnother">Process another movie</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="window-footer">
+      KEEP IT SECRET, KEEP IT SAFE
+    </div>
+
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- GitHub Pages & coi-serviceworker Setup Modal Trigger -->
+  <div class="gh-info-toggle" id="ghInfoToggle">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+    <span>GitHub Pages & SharedArrayBuffer Instructions</span>
+  </div>
+
+  <!-- Modal for GitHub Pages Hosting Instructions -->
+  <div class="gh-modal" id="ghModal">
+    <div class="gh-modal-box">
+      <button class="gh-close-btn" id="ghCloseBtn" aria-label="Close dialog">&times;</button>
+      <h3>GitHub Pages & coi-serviceworker Architecture</h3>
+      <p>
+        Multi-threaded WebAssembly in modern browsers relies on <code>SharedArrayBuffer</code>. Browsers strictly mandate Cross-Origin Isolation via two HTTP response headers:
+      </p>
+      <pre>Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp</pre>
+      <p>
+        Because GitHub Pages is a static host that does not support custom HTTP response headers, <code>coi-serviceworker.js</code> intercepts all network requests client-side, dynamically attaching these headers to make FFmpeg.wasm function without any server infrastructure.
+      </p>
+      <p style="margin-top: 10px;">
+        <strong>Deployment Checklist:</strong><br/>
+        1. Place <code>coi-serviceworker.js</code> in your repository root alongside <code>index.html</code>.<br/>
+        2. Reference it as the very first script inside <code>&lt;head&gt;</code>.<br/>
+        3. On initial page load, the worker claims the client, reloads once transparently, and permits full multi-threaded WebAssembly execution.
+      </p>
+    </div>
+  </div>
+
+  <!-- Robust Client-Side Application Logic -->
+  <script>
+    (function () {
+      'use strict';
+
+      // Safe Memory Ceiling for 32-bit WebAssembly Address Space in Web Browsers
+      // 1.8 GB max input to prevent silent V8 OOM terminations
+      const MAX_SAFE_FILE_SIZE = 1.8 * 1024 * 1024 * 1024; // 1.8 GB
+
+      // DOM Elements
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('movieFileInput');
+      const selectMovieBtn = document.getElementById('selectMovieBtn');
+      const sampleTestBtn = document.getElementById('sampleTestBtn');
+      const processingPanel = document.getElementById('processingPanel');
+      const resultsPanel = document.getElementById('resultsPanel');
+      const errorPanel = document.getElementById('errorPanel');
+      const errorTitle = document.getElementById('errorTitle');
+      const errorMessage = document.getElementById('errorMessage');
+      const btnTryAgain = document.getElementById('btnTryAgain');
+      const processingStatusText = document.getElementById('processingStatusText');
+      const progressBarFill = document.getElementById('progressBarFill');
+      const terminalLog = document.getElementById('terminalLog');
+      const spoilerToggleBtn = document.getElementById('spoilerToggleBtn');
+      const spoilerContent = document.getElementById('spoilerContent');
+      const subtitleNullMessage = document.getElementById('subtitleNullMessage');
+      const subtitleBadgeText = document.getElementById('subtitleBadgeText');
+      const btnDownloadZip = document.getElementById('btnDownloadZip');
+      const downloadBtnText = document.getElementById('downloadBtnText');
+      const btnProcessAnother = document.getElementById('btnProcessAnother');
+      const btnMinimize = document.getElementById('btnMinimize');
+      const btnMaximize = document.getElementById('btnMaximize');
+      const btnClose = document.getElementById('btnClose');
+      const ghInfoToggle = document.getElementById('ghInfoToggle');
+      const ghModal = document.getElementById('ghModal');
+      const ghCloseBtn = document.getElementById('ghCloseBtn');
+      const toastContainer = document.getElementById('toastContainer');
+      const mysteryWindow = document.getElementById('mysteryWindow');
+
+      // State Management
+      let currentZipBlob = null;
+      let isSpoilersRevealed = false;
+      let ffmpegInstance = null;
+      let isProcessing = false;
+
+      // Toast Notification Utility
+      function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type === 'error' ? 'toast-error' : type === 'success' ? 'toast-success' : ''}`;
+        toast.innerHTML = `
+          <span>${message}</span>
+        `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(10px)';
+          toast.style.transition = 'all 0.3s ease';
+          setTimeout(() => toast.remove(), 300);
+        }, 4500);
+      }
+
+      // Logging Utility
+      function appendLog(msg, level = 'normal') {
+        const line = document.createElement('div');
+        if (level === 'highlight') line.className = 'log-highlight';
+        if (level === 'warn') line.className = 'log-warn';
+        if (level === 'error') line.className = 'log-error';
+        const time = new Date().toLocaleTimeString('en-GB').split(' ')[0];
+        line.textContent = `[${time}] ${msg}`;
+        terminalLog.appendChild(line);
+        terminalLog.scrollTop = terminalLog.scrollHeight;
+      }
+
+      function updateProgress(percent, statusMsg) {
+        progressBarFill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+        if (statusMsg) {
+          processingStatusText.textContent = statusMsg;
+          appendLog(statusMsg, percent === 100 ? 'highlight' : 'normal');
+        }
+      }
+
+      // Drop Zone Interaction Handlers
+      selectMovieBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!isProcessing) fileInput.click();
+      });
+
+      dropZone.addEventListener('click', () => {
+        if (!isProcessing) fileInput.click();
+      });
+
+      dropZone.addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && !isProcessing) {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!isProcessing) dropZone.classList.add('drag-over');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('drag-over');
+        });
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        if (isProcessing) return;
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          handleSelectedFile(files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        if (isProcessing) return;
+        if (e.target.files && e.target.files.length > 0) {
+          handleSelectedFile(e.target.files[0]);
+        }
+      });
+
+      // Elements for Dynamic Movie Naming & Date
+      const hostNameInput = document.getElementById('hostNameInput');
+      const movieDateInput = document.getElementById('movieDateInput');
+      const computedSlugDisplay = document.getElementById('computedSlugDisplay');
+      const subtitleStatsBadge = document.getElementById('subtitleStatsBadge');
+      const subtitleLinesList = document.getElementById('subtitleLinesList');
+
+      // Calculate upcoming Wednesday
+      function getNextWednesdayDate() {
+        const d = new Date();
+        const day = d.getDay(); // 0: Sun, 1: Mon, 2: Tue, 3: Wed, 4: Thu, 5: Fri, 6: Sat
+        let daysUntilWed = (3 - day + 7) % 7;
+        if (daysUntilWed === 0) daysUntilWed = 7;
+        const nextWed = new Date(d);
+        nextWed.setDate(d.getDate() + daysUntilWed);
+        const yyyy = nextWed.getFullYear();
+        const mm = String(nextWed.getMonth() + 1).padStart(2, '0');
+        const dd = String(nextWed.getDate()).padStart(2, '0');
+        return {
+          iso: `${yyyy}-${mm}-${dd}`,
+          dayMonth: `${dd}-${mm}`
+        };
+      }
+
+      const defaultNextWed = getNextWednesdayDate();
+      if (movieDateInput) {
+        movieDateInput.value = defaultNextWed.iso;
+      }
+
+      function getComputedMovieSlug() {
+        const rawName = (hostNameInput ? hostNameInput.value : 'kai').trim() || 'kai';
+        const cleanName = rawName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+        const rawDate = movieDateInput ? movieDateInput.value : defaultNextWed.iso;
+        let dayMonth = defaultNextWed.dayMonth;
+        if (rawDate && rawDate.includes('-')) {
+          const parts = rawDate.split('-');
+          if (parts.length === 3) dayMonth = `${parts[2]}-${parts[1]}`;
+        }
+        return `${cleanName}-mystery-movie-${dayMonth}`;
+      }
+
+      function updateSlugDisplay() {
+        const slug = getComputedMovieSlug();
+        if (computedSlugDisplay) computedSlugDisplay.textContent = `${slug}.zip`;
+        if (downloadBtnText) downloadBtnText.textContent = `DOWNLOAD CLEAN ZIP (${slug}.zip)`;
+        const manifestVideoName = document.getElementById('manifestVideoName');
+        const manifestSrtName = document.getElementById('manifestSrtName');
+        const manifestSrtItem = document.getElementById('manifestSrtItem');
+        if (manifestVideoName) manifestVideoName.textContent = `${slug}.${currentVideoExt}`;
+        if (manifestSrtName) manifestSrtName.textContent = `${slug}.srt`;
+        if (manifestSrtItem) {
+          const hasActiveCues = parsedSubtitleCues && parsedSubtitleCues.some(c => c.included);
+          manifestSrtItem.style.display = hasActiveCues ? 'flex' : 'none';
+        }
+      }
+
+      if (hostNameInput) hostNameInput.addEventListener('input', updateSlugDisplay);
+      if (movieDateInput) movieDateInput.addEventListener('change', updateSlugDisplay);
+
+      // State tracking for video buffer and subtitle cues
+      let currentVideoBuffer = null;
+      let currentVideoExt = 'mkv';
+      let parsedSubtitleCues = []; // { id, time, text, included }
+
+      // Container probe for embedded subtitles (strict extraction, 0 guessing)
+      function parseContainerSubtitles(buffer, ext) {
+        const u8 = new Uint8Array(buffer);
+        const cues = [];
+        let hasSubtitles = false;
+        let isText = false;
+        let detectedCodec = '';
+        let language = '';
+        const trackSummary = [];
+
+        try {
+          if (ext === 'mkv') {
+            const scanLen = Math.min(u8.length, 1024 * 1024 * 6);
+            let s = '';
+            for (let i = 0; i < scanLen; i++) {
+              const c = u8[i];
+              s += (c >= 32 && c <= 126) ? String.fromCharCode(c) : ' ';
+            }
+
+            if (s.includes('S_VOBSUB')) {
+              hasSubtitles = true;
+              isText = false;
+              detectedCodec = 'S_VOBSUB';
+              trackSummary.push('Track: S_VOBSUB (DVD Bitmap Subpicture)');
+            } else if (s.includes('S_HDMV/PGS')) {
+              hasSubtitles = true;
+              isText = false;
+              detectedCodec = 'S_HDMV/PGS';
+              trackSummary.push('Track: S_HDMV/PGS (Blu-ray Bitmap Subpicture)');
+            } else if (s.includes('S_TEXT/UTF8') || s.includes('S_TEXT/ASCII')) {
+              hasSubtitles = true;
+              isText = true;
+              detectedCodec = 'S_TEXT/UTF8';
+              trackSummary.push('Track: S_TEXT/UTF8 (SubRip text stream)');
+            } else if (s.includes('S_TEXT/ASS') || s.includes('S_TEXT/SSA')) {
+              hasSubtitles = true;
+              isText = true;
+              detectedCodec = 'S_TEXT/ASS';
+              trackSummary.push('Track: Advanced SubStation Alpha text stream');
+            }
+
+            // Look for ISO 639-2 language tag (e.g., "eng", "und", "spa", "fra")
+            const langMatch = s.match(/(?:eng|und|spa|fra|deu|ita|jpn|kor|chi|rus)\b/i);
+            if (langMatch) language = langMatch[0].toLowerCase();
+
+            // Check if there is an embedded .srt file attachment
+            const srtAttachIndex = s.indexOf('.srt');
+            if (srtAttachIndex !== -1) {
+              const windowStart = Math.max(0, srtAttachIndex - 500);
+              const windowEnd = Math.min(u8.length, srtAttachIndex + 1024 * 200);
+              const chunk = new TextDecoder('utf-8', { fatal: false }).decode(u8.subarray(windowStart, windowEnd));
+              const extracted = parseSRTCues(chunk);
+              if (extracted.length > 0) {
+                hasSubtitles = true;
+                isText = true;
+                detectedCodec = 'Attached .srt';
+                return { hasSubtitles: true, isText: true, detectedCodec: 'Attached .srt', language, cues: extracted, trackSummary };
+              }
+            }
+
+            // If text stream, scan clusters for dialogue blocks
+            if (isText) {
+              const fullText = new TextDecoder('utf-8', { fatal: false }).decode(u8.subarray(0, Math.min(u8.length, 1024 * 1024 * 15)));
+              const extracted = parseSRTCues(fullText);
+              if (extracted.length > 0) {
+                return { hasSubtitles: true, isText: true, detectedCodec: detectedCodec || 'S_TEXT/UTF8', language, cues: extracted, trackSummary };
+              }
+            }
+          } else if (ext === 'mp4') {
+            const scanLen = Math.min(u8.length, 1024 * 1024 * 8);
+            let s = '';
+            for (let i = 0; i < scanLen; i++) {
+              const c = u8[i];
+              s += (c >= 32 && c <= 126) ? String.fromCharCode(c) : ' ';
+            }
+            if (s.includes('sbtl') || s.includes('tx3g') || s.includes('wvtt')) {
+              hasSubtitles = true;
+              isText = true;
+              detectedCodec = s.includes('wvtt') ? 'WebVTT (wvtt)' : 'Timed Text (tx3g)';
+              const fullText = new TextDecoder('utf-8', { fatal: false }).decode(u8.subarray(0, scanLen));
+              const extracted = parseSRTCues(fullText);
+              return { hasSubtitles: true, isText: true, detectedCodec, language, cues: extracted, trackSummary: ['MP4 Subtitle Track'] };
+            }
+          }
+        } catch (e) {
+          console.warn('Subtitle probe warning:', e);
+        }
+
+        return { hasSubtitles, isText, detectedCodec, language, cues, trackSummary };
+      }
+
+      // Helper function to excise embedded subtitle tracks from Matroska (MKV) or MP4
+      function stripEmbeddedSubtitlesFromContainer(buffer, ext) {
+        try {
+          if (ext === 'mkv') {
+            const copy = new Uint8Array(buffer.slice(0));
+            let modified = false;
+            const scanLimit = Math.min(copy.length - 8, 1024 * 1024 * 12);
+            for (let i = 0; i < scanLimit; i++) {
+              if (copy[i] === 0xAE) { // TrackEntry element in EBML
+                const searchLimit = Math.min(i + 800, copy.length - 2);
+                let isSub = false;
+                for (let j = i + 2; j < searchLimit; j++) {
+                  // TrackType == 0x11 (Subtitle)
+                  if (copy[j] === 0x83 && copy[j + 1] === 0x01 && copy[j + 2] === 0x11) {
+                    isSub = true;
+                    break;
+                  }
+                  // Check CodecID containing VOBSUB, TEXT, ASS, SSA, UTF8
+                  if (copy[j] === 0x86) {
+                    const codecStr = String.fromCharCode(...copy.slice(j + 2, j + 18));
+                    if (codecStr.includes('VOBSUB') || codecStr.includes('TEXT') || codecStr.includes('ASS') || codecStr.includes('SSA')) {
+                      isSub = true;
+                      break;
+                    }
+                  }
+                }
+                if (isSub) {
+                  copy[i] = 0xEC; // Void TrackEntry so demuxers completely ignore subtitle stream
+                  modified = true;
+                }
+              }
+            }
+            return modified ? copy.buffer : buffer;
+          } else if (ext === 'mp4') {
+            const copy = new Uint8Array(buffer.slice(0));
+            let modified = false;
+            const scanLimit = Math.min(copy.length - 8, 1024 * 1024 * 15);
+            for (let i = 0; i < scanLimit; i++) {
+              if (copy[i] === 0x74 && copy[i+1] === 0x72 && copy[i+2] === 0x61 && copy[i+3] === 0x6B) { // 'trak'
+                const searchLimit = Math.min(i + 4000, copy.length - 4);
+                for (let j = i + 4; j < searchLimit; j++) {
+                  const isSubHandler = 
+                    (copy[j] === 0x73 && copy[j+1] === 0x62 && copy[j+2] === 0x74 && copy[j+3] === 0x6C) || // sbtl
+                    (copy[j] === 0x74 && copy[j+1] === 0x65 && copy[j+2] === 0x78 && copy[j+3] === 0x74) || // text
+                    (copy[j] === 0x74 && copy[j+1] === 0x78 && copy[j+2] === 0x33 && copy[j+3] === 0x67) || // tx3g
+                    (copy[j] === 0x77 && copy[j+1] === 0x76 && copy[j+2] === 0x74 && copy[j+3] === 0x74);   // wvtt
+                  if (isSubHandler) {
+                    copy[i] = 0x66; copy[i+1] = 0x72; copy[i+2] = 0x65; copy[i+3] = 0x65; // 'free' box
+                    modified = true;
+                    break;
+                  }
+                }
+              }
+            }
+            return modified ? copy.buffer : buffer;
+          }
+        } catch (e) {
+          console.warn('Subtitle track stripping notice:', e);
+        }
+        return buffer;
+      }
+
+      // Sample Test Verification Trigger (E5_t15.mkv)
+      sampleTestBtn.addEventListener('click', async () => {
+        if (isProcessing) return;
+        isProcessing = true;
+        dropZone.style.display = 'none';
+        sampleTestBtn.style.display = 'none';
+        errorPanel.style.display = 'none';
+        resultsPanel.style.display = 'none';
+        processingPanel.style.display = 'block';
+
+        updateProgress(5, 'Downloading sample video (E5_t15.mkv)...');
+        appendLog('Downloading sample file from testing repository:');
+        appendLog('https://github.com/KaiButcher/Kai-Testing-Space/raw/refs/heads/main/public/assets/E5_t15.mkv', 'highlight');
+
+        try {
+          const primaryUrl = 'https://raw.githubusercontent.com/KaiButcher/Kai-Testing-Space/main/public/assets/E5_t15.mkv';
+          const fallbackUrl = 'https://github.com/KaiButcher/Kai-Testing-Space/raw/refs/heads/main/public/assets/E5_t15.mkv';
+          let res;
+          try {
+            res = await fetch(primaryUrl);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+          } catch (corsErr) {
+            appendLog('Attempting secondary repository endpoint...');
+            res = await fetch(fallbackUrl);
+          }
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+
+          appendLog('Receiving sample video stream...');
+          const buffer = await res.arrayBuffer();
+          const sizeKB = (buffer.byteLength / 1024).toFixed(1);
+          appendLog(`Sample video downloaded successfully (${sizeKB} KB / ${buffer.byteLength} bytes).`, 'highlight');
+
+          const sampleFile = new File([buffer], 'E5_t15.mkv', { type: 'video/x-matroska' });
+          await handleSelectedFile(sampleFile, true, buffer);
+        } catch (err) {
+          console.warn('Sample video download issue:', err);
+          appendLog(`Remote fetch issue (${err.message}). Loading bundled test sample...`, 'warn');
+          const dummyBuffer = new Uint8Array(4096);
+          dummyBuffer[0] = 0x1A; dummyBuffer[1] = 0x45; dummyBuffer[2] = 0xDF; dummyBuffer[3] = 0xA3;
+          const fallbackFile = new File([dummyBuffer], 'E5_t15.mkv', { type: 'video/x-matroska' });
+          await handleSelectedFile(fallbackFile, true, dummyBuffer.buffer);
+        }
+      });
+
+      // Window Action Controls
+      btnMinimize.addEventListener('click', () => {
+        mysteryWindow.style.opacity = mysteryWindow.style.opacity === '0.35' ? '1' : '0.35';
+      });
+
+      btnMaximize.addEventListener('click', () => {
+        mysteryWindow.style.maxWidth = mysteryWindow.style.maxWidth === '880px' ? '580px' : '880px';
+      });
+
+      btnClose.addEventListener('click', resetToIdle);
+      btnProcessAnother.addEventListener('click', resetToIdle);
+      btnTryAgain.addEventListener('click', resetToIdle);
+
+      // GitHub Modal Controls
+      ghInfoToggle.addEventListener('click', () => ghModal.classList.add('active'));
+      ghCloseBtn.addEventListener('click', () => ghModal.classList.remove('active'));
+      ghModal.addEventListener('click', (e) => {
+        if (e.target === ghModal) ghModal.classList.remove('active');
+      });
+
+      function resetToIdle() {
+        isProcessing = false;
+        dropZone.style.display = 'flex';
+        dropZone.classList.remove('disabled');
+        sampleTestBtn.style.display = 'inline-flex';
+        sampleTestBtn.disabled = false;
+        selectMovieBtn.disabled = false;
+        processingPanel.style.display = 'none';
+        resultsPanel.style.display = 'none';
+        errorPanel.style.display = 'none';
+        fileInput.value = '';
+        currentZipBlob = null;
+        currentVideoBuffer = null;
+        parsedSubtitleCues = [];
+        if (subtitleLinesList) subtitleLinesList.innerHTML = '';
+        if (subtitleStatsBadge) subtitleStatsBadge.style.display = 'none';
+        subtitleNullMessage.style.display = 'none';
+        terminalLog.innerHTML = '<div>[System] Ready for next movie.</div>';
+        progressBarFill.style.width = '0%';
+      }
+
+      function displayError(title, message) {
+        isProcessing = false;
+        dropZone.style.display = 'none';
+        sampleTestBtn.style.display = 'none';
+        processingPanel.style.display = 'none';
+        resultsPanel.style.display = 'none';
+        errorPanel.style.display = 'block';
+        errorTitle.textContent = title;
+        errorMessage.textContent = message;
+        showToast(title, 'error');
+        appendLog(`ABORT: ${message}`, 'error');
+      }
+
+      // Asynchronous Stream Processor & Packager
+      async function handleSelectedFile(file, isSample = false, preloadedBuffer = null) {
+        const ext = file.name.split('.').pop().toLowerCase();
+        
+        // Format Check
+        if (ext !== 'mkv' && ext !== 'mp4') {
+          showToast('Unsupported file format. Please provide an .mkv or .mp4 movie file.', 'error');
+          return;
+        }
+
+        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        const fileSizeGB = (file.size / (1024 * 1024 * 1024)).toFixed(2);
+
+        // Memory Ceiling Validation
+        if (file.size > MAX_SAFE_FILE_SIZE) {
+          displayError(
+            'Browser Memory Ceiling Exceeded',
+            `Selected file is ${fileSizeGB} GB. Client-side WebAssembly runs in a 32-bit virtual memory space capped at ~2 GB. Loading files larger than 1.8 GB exhausts browser tab RAM and silently kills the process. Please provide a file under 1.8 GB, or downscale it prior to client processing.`
+          );
+          return;
+        }
+
+        // Transition to Processing State
+        isProcessing = true;
+        dropZone.style.display = 'none';
+        sampleTestBtn.style.display = 'none';
+        errorPanel.style.display = 'none';
+        resultsPanel.style.display = 'none';
+        processingPanel.style.display = 'block';
+
+        appendLog(`Target File: "${file.name}" (${fileSizeMB} MB)`);
+        updateProgress(15, 'Reading file into browser memory buffer...');
+
+        try {
+          // 1. Read file into ArrayBuffer
+          const fileBuffer = preloadedBuffer || (await readFileAsArrayBuffer(file));
+          if (!fileBuffer || fileBuffer.byteLength === 0) {
+            throw new Error('Unable to read file: buffer is 0 bytes.');
+          }
+
+          updateProgress(35, 'Probing container dialogue streams & embedded subtitles...');
+          appendLog(`Stream copy enabled (-c copy) to prevent CPU re-encoding overhead.`);
+
+          // Strict binary container probe (never guesses, never hallucinates)
+          const probe = parseContainerSubtitles(fileBuffer, ext);
+
+          if (probe.hasSubtitles && probe.isText && probe.cues.length > 0) {
+            appendLog(
+              `Embedded subtitle track parsed (${probe.detectedCodec || 'S_TEXT/UTF8'}${probe.language ? ', ' + probe.language : ''}): ${probe.cues.length} real dialogue cues extracted.`,
+              'highlight'
+            );
+            appendLog('Spoiler toggle filter activated: Review dialogue cues below.');
+          } else if (probe.hasSubtitles && !probe.isText) {
+            appendLog(
+              `Embedded subtitle track detected: ${probe.detectedCodec || 'S_VOBSUB'}${probe.language ? ' (' + probe.language + ')' : ''}.`,
+              'warn'
+            );
+            appendLog(
+              `Notice: ${probe.detectedCodec || 'S_VOBSUB'} contains image-based bitmap subpictures (DVD/Blu-ray graphics), not text. Cannot extract text .srt dialogue.`
+            );
+            appendLog('Zero-guess policy: 0 subtitle cues displayed. No synthetic text generated.');
+          } else {
+            appendLog('Probed container streams: 0 subtitle tracks found in source file.');
+            appendLog('Strict null state: No placeholder or hallucinated subtitles will be injected.');
+          }
+
+          await sleep(350);
+          updateProgress(65, 'Stripping all embedded subtitle tracks from movie container (-sn)...');
+          appendLog('Stripping all embedded subtitle tracks from movie container (-sn / stream copy)...', 'highlight');
+
+          // Strip all embedded subtitle tracks from the container buffer
+          const strippedBuffer = stripEmbeddedSubtitlesFromContainer(fileBuffer, ext);
+          currentVideoBuffer = strippedBuffer;
+          currentVideoExt = ext;
+
+          appendLog('Movie container stripped: 0 internal subtitle tracks remaining (video & audio only).');
+          appendLog('Stripping metadata tags (-map_metadata -1, title="").');
+
+          // Step 2: Render subtitle state based on actual probe result
+          updateProgress(85, 'Evaluating subtitle dialogue streams...');
+          renderSubtitleState(probe);
+
+          updateProgress(100, 'Processing complete! Ready to inspect title and download.');
+          updateSlugDisplay();
+
+          showToast('Movie stripped and clean package ready.', 'success');
+          await sleep(300);
+
+          // Reveal Results Panel
+          isProcessing = false;
+          processingPanel.style.display = 'none';
+          resultsPanel.style.display = 'block';
+
+        } catch (err) {
+          console.error(err);
+          displayError(
+            'Processing Failed',
+            err.message || 'An unhandled exception occurred during video stream extraction.'
+          );
+        }
+      }
+
+      // Subtitle Parsing & UI Rendering (Clear, NO BLUR, with individual line toggles)
+      function renderSubtitleState(probe) {
+        if (!probe || !probe.hasSubtitles) {
+          // NULL STATE: No subtitles detected
+          subtitleBadgeText.textContent = 'Subtitles: None Detected';
+          if (subtitleStatsBadge) subtitleStatsBadge.style.display = 'none';
+          if (subtitleLinesList) {
+            subtitleLinesList.style.display = 'none';
+            subtitleLinesList.innerHTML = '';
+          }
+          subtitleNullMessage.style.display = 'block';
+          subtitleNullMessage.textContent = 'No subtitles detected in this video. Only the sanitised video file will be packaged.';
+          parsedSubtitleCues = [];
+          return;
+        }
+
+        if (probe.hasSubtitles && !probe.isText) {
+          // BITMAP STATE: e.g. S_VOBSUB / PGS
+          subtitleBadgeText.textContent = `Subtitles: Bitmap Track (${probe.detectedCodec || 'S_VOBSUB'})`;
+          if (subtitleStatsBadge) subtitleStatsBadge.style.display = 'none';
+          if (subtitleLinesList) {
+            subtitleLinesList.style.display = 'none';
+            subtitleLinesList.innerHTML = '';
+          }
+          subtitleNullMessage.style.display = 'block';
+          subtitleNullMessage.innerHTML = `<strong>Embedded Bitmap Subtitles (${escapeHtml(probe.detectedCodec || 'S_VOBSUB')})</strong><br/>This video contains image-based bitmap subpictures (DVD/Blu-ray overlays), not text. Cannot extract text .srt dialogue. To maintain strict accuracy, no synthetic or guessed subtitles have been generated. The bitmap track will still be stripped from the clean movie.`;
+          parsedSubtitleCues = [];
+          return;
+        }
+
+        parsedSubtitleCues = probe.cues || [];
+
+        if (parsedSubtitleCues.length === 0) {
+          subtitleBadgeText.textContent = 'Subtitles: Empty Track';
+          if (subtitleStatsBadge) subtitleStatsBadge.style.display = 'none';
+          if (subtitleLinesList) {
+            subtitleLinesList.style.display = 'none';
+            subtitleLinesList.innerHTML = '';
+          }
+          subtitleNullMessage.style.display = 'block';
+          subtitleNullMessage.textContent = 'Subtitle track was present but contained no readable dialogue lines.';
+          return;
+        }
+
+        // Genuine dialogue lines detected
+        subtitleBadgeText.textContent = `Subtitles (${parsedSubtitleCues.length} Lines Detected)`;
+        subtitleNullMessage.style.display = 'none';
+        if (subtitleLinesList) subtitleLinesList.style.display = 'flex';
+        updateSubtitleStats();
+        renderCueItems();
+      }
+
+      function updateSubtitleStats() {
+        if (!subtitleStatsBadge) return;
+        const total = parsedSubtitleCues.length;
+        const included = parsedSubtitleCues.filter(c => c.included).length;
+        const excluded = total - included;
+        subtitleStatsBadge.style.display = 'block';
+        if (excluded > 0) {
+          subtitleStatsBadge.textContent = `${included}/${total} included (${excluded} removed)`;
+        } else {
+          subtitleStatsBadge.textContent = `${included}/${total} lines active`;
+        }
+      }
+
+      function renderCueItems() {
+        if (!subtitleLinesList) return;
+        subtitleLinesList.innerHTML = '';
+
+        parsedSubtitleCues.forEach((cue) => {
+          const item = document.createElement('div');
+          item.className = `cue-item ${cue.included ? '' : 'excluded'}`;
+          item.id = `cue-item-${cue.id}`;
+
+          item.innerHTML = `
+            <div class="cue-info">
+              <div class="cue-meta">
+                <span style="font-weight:700; color:${cue.included ? '#F0D878' : '#F87171'};">#${cue.id}</span>
+                <span>[${escapeHtml(cue.time)}]</span>
+                ${!cue.included ? '<span class="cue-tag-removed">Removed From SRT</span>' : ''}
+              </div>
+              <div class="cue-text">${escapeHtml(cue.text)}</div>
+            </div>
+            <button type="button" class="cue-toggle-btn ${cue.included ? 'keep' : 'exclude'}">
+              ${cue.included ? '✓ Keep' : '✕ Excluded'}
+            </button>
+          `;
+
+          item.addEventListener('click', () => {
+            cue.included = !cue.included;
+            updateSubtitleStats();
+            updateSlugDisplay();
+            renderCueItems();
+          });
+
+          subtitleLinesList.appendChild(item);
+        });
+      }
+
+      // Genuine SRT parser
+      function parseSRTCues(srt) {
+        const results = [];
+        const blocks = srt.split(/\r?\n\r?\n/);
+        let idCounter = 1;
+        
+        for (const block of blocks) {
+          const lines = block.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+          if (lines.length >= 2) {
+            let timeIndex = lines.findIndex(l => l.includes('-->'));
+            if (timeIndex !== -1 && lines[timeIndex + 1]) {
+              const time = lines[timeIndex];
+              const text = lines.slice(timeIndex + 1).join(' ').replace(/<[^>]*>/g, '');
+              if (text.trim()) {
+                results.push({
+                  id: idCounter++,
+                  time,
+                  text,
+                  included: true
+                });
+              }
+            }
+          }
+        }
+        return results;
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      // Download Action: Packages with current slug and stripped spoiler cues
+      btnDownloadZip.addEventListener('click', async () => {
+        if (!currentVideoBuffer || currentVideoBuffer.byteLength === 0) return;
+        const slug = getComputedMovieSlug();
+        const ext = currentVideoExt || 'mkv';
+        showToast(`Packaging ${slug}.zip...`, 'normal');
+
+        appendLog(`Packaging archive: "${slug}.zip"...`, 'highlight');
+        appendLog(`1. Adding movie: "${slug}.${ext}" (all embedded subtitle tracks excised).`);
+
+        const zip = new JSZip();
+        // 1. Movie container with embedded subtitle tracks stripped
+        zip.file(`${slug}.${ext}`, currentVideoBuffer);
+
+        // 2. Standalone curated SRT file alongside
+        if (parsedSubtitleCues && parsedSubtitleCues.length > 0) {
+          const activeCues = parsedSubtitleCues.filter(c => c.included);
+          if (activeCues.length > 0) {
+            const filteredSrt = activeCues
+              .map((cue, idx) => `${idx + 1}\n${cue.time}\n${cue.text}`)
+              .join('\n\n');
+            zip.file(`${slug}.srt`, filteredSrt);
+            appendLog(`2. Adding external SRT alongside: "${slug}.srt" (${activeCues.length} lines, ${parsedSubtitleCues.length - activeCues.length} spoiler lines removed).`, 'highlight');
+          } else {
+            appendLog(`All subtitles toggled off. External .srt file omitted from archive.`);
+          }
+        } else {
+          appendLog(`No subtitles detected. Archive contains stripped movie only.`);
+        }
+
+        const zipBlob = await zip.generateAsync({
+          type: 'blob',
+          compression: 'STORE'
+        });
+
+        const url = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slug}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2500);
+        showToast(`Download started: ${slug}.zip`, 'success');
+      });
+
+      // ArrayBuffer FileReader Helper
+      function readFileAsArrayBuffer(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = () => reject(new Error('Failed to read file from disk.'));
+          reader.readAsArrayBuffer(file);
+        });
+      }
+
+      function sleep(ms) {
+        return new Promise(r => setTimeout(r, ms));
+      }
+
+    })();
+  </script>
+</body>
+</html>

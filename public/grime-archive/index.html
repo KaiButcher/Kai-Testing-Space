@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Grime Archive — 12,603 Preserved Sounds, Sets & Ephemera</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #08090C;
+      --bg-surface: #101217;
+      --bg-card: #151820;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --accent: #F0D878;
+      --accent-glow: rgba(240, 216, 120, 0.15);
+      --text-main: #FFFFFF;
+      --text-muted: rgba(255, 255, 255, 0.6);
+      --font-display: 'Space Grotesk', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-display);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+    header {
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.25rem 2rem;
+      background: rgba(16, 18, 23, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 0.2rem 0.6rem;
+      background: var(--accent-glow);
+      border: 1px solid rgba(240, 216, 120, 0.3);
+      color: var(--accent);
+      border-radius: 9999px;
+      letter-spacing: 0.05em;
+    }
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .stats-row span strong { color: var(--accent); }
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem;
+    }
+    .controls-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .search-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .search-box {
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      color: #FFF;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+    .search-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    select, .btn-action {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s;
+    }
+    select {
+      max-width: 260px;
+    }
+    select:focus, .btn-action:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .type-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .pill.active {
+      background: var(--accent);
+      color: #000;
+      font-weight: 600;
+      border-color: var(--accent);
+    }
+    .pill .pill-count {
+      font-size: 0.65rem;
+      opacity: 0.8;
+    }
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      gap: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .meta-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .view-toggle {
+      display: flex;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .view-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.45rem 0.85rem;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+    .view-btn.active {
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFF;
+      font-weight: 600;
+    }
+
+    /* Pagination controls */
+    .pagination-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin: 1.5rem 0;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .pagination-btn {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      transition: all 0.15s;
+    }
+    .pagination-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .pagination-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .pagination-btn.active {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      border-color: var(--accent);
+    }
+    .page-controls-group {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    /* Cards Grid */
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+    .archive-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .archive-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(240, 216, 120, 0.4);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .card-folder {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      word-break: break-all;
+    }
+    .card-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #FFF;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+      word-break: break-word;
+    }
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .card-link {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.05);
+      color: #FFF;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .card-link:hover {
+      background: var(--accent);
+      color: #000;
+      font-weight: 600;
+    }
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      color: var(--text-muted);
+      padding: 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFF;
+    }
+
+    /* Table View */
+    .table-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.9rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+    }
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+    .table-title { color: #FFF; font-weight: 500; max-width: 450px; }
+    .table-link { color: var(--accent); text-decoration: none; }
+    .table-link:hover { text-decoration: underline; }
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #11141a;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand-title">
+        <span>My Grime Archive</span>
+        <span class="brand-badge">12,603 PRESERVED FILES</span>
+      </div>
+      <div class="stats-row">
+        <span>TOTAL ITEMS: <strong id="statTotal">12,603</strong></span>
+        <span>AUDIO: <strong id="statAudio">12,110</strong></span>
+        <span>ART &amp; PHOTOS: <strong id="statImages">298</strong></span>
+        <span>FOLDERS: <strong id="statFolders">478</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="controls-container">
+      <div class="search-row">
+        <div class="search-box">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search across 12,603 files: Wiley, Dizzee, Skepta, Silverdrizzle, sets, acapellas..." />
+        </div>
+        <select id="folderSelect">
+          <option value="">All Folders / Collections</option>
+        </select>
+        <select id="yearSelect">
+          <option value="">All Years</option>
+        </select>
+        <button id="btnExport" class="btn-action" title="Export current items as CSV">Export CSV</button>
+        <label class="btn-action" style="cursor: pointer;">
+          <span>Import CSV</span>
+          <input type="file" id="fileInput" accept=".csv" style="display: none;" />
+        </label>
+      </div>
+
+      <div class="filter-group">
+        <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Media:</span>
+        <div class="type-pills" id="typePills">
+          <button class="pill active" data-type="">All <span class="pill-count" id="pillCountAll"></span></button>
+          <button class="pill" data-type="Audio">Audio <span class="pill-count" id="pillCountAudio"></span></button>
+          <button class="pill" data-type="Image">Images <span class="pill-count" id="pillCountImage"></span></button>
+          <button class="pill" data-type="Other">Other / 7z <span class="pill-count" id="pillCountOther"></span></button>
+          <button class="pill" data-type="Video">Videos &amp; DVDs <span class="pill-count" id="pillCountVideo"></span></button>
+          <button class="pill" data-type="Document">Documents <span class="pill-count" id="pillCountDocument"></span></button>
+          <button class="pill" data-type="Spreadsheet">Spreadsheets <span class="pill-count" id="pillCountSpreadsheet"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Meta & Controls -->
+    <div class="meta-bar">
+      <div class="meta-bar-left">
+        <div id="resultsCount">Loading 12,603 archive items...</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span>Per page:</span>
+          <select id="pageSizeSelect" style="padding: 0.35rem 0.5rem; font-size: 0.75rem;">
+            <option value="30">30</option>
+            <option value="60" selected>60</option>
+            <option value="120">120</option>
+            <option value="240">240</option>
+          </select>
+        </div>
+        <div class="view-toggle">
+          <button id="btnViewGrid" class="view-btn active">Grid</button>
+          <button id="btnViewTable" class="view-btn">Table</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div id="contentContainer">
+      <div id="gridView" class="archive-grid"></div>
+      <div id="tableView" class="table-container" style="display: none;">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Folder / Category</th>
+              <th>Type</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bottom Pagination Controls -->
+    <div id="paginationBottom" class="pagination-bar" style="display: none;">
+      <div id="paginationInfo">Page 1 of 1</div>
+      <div class="page-controls-group" id="pageButtonsContainer"></div>
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span>Go to:</span>
+        <input type="number" id="jumpPageInput" min="1" value="1" style="width: 50px; background: var(--bg-dark); border: 1px solid var(--border-color); color: #FFF; padding: 0.3rem; border-radius: 4px; font-family: var(--font-mono); font-size: 0.75rem; text-align: center;" />
+        <button id="btnJumpPage" class="pagination-btn">Go</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast">Link copied to clipboard</div>
+
+  <script>
+    let archiveData = [];
+    let currentType = '';
+    let currentView = 'grid';
+    let currentPage = 1;
+    let pageSize = 60;
+
+    function extractYear(title) {
+      const match = title.match(/\b(199\d|20[0-2]\d)\b/);
+      return match ? match[1] : null;
+    }
+
+    async function loadInitialData() {
+      try {
+        const resp = await fetch('grime_archive.csv');
+        if (!resp.ok) throw new Error('File not found');
+        const text = await resp.text();
+        parseCSV(text);
+      } catch (err) {
+        console.warn('Loading fallback data due to fetch error:', err);
+      }
+    }
+
+    function parseCSV(csvString) {
+      Papa.parse(csvString, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          archiveData = results.data
+            .filter(r => r.Title && r['Direct Link'])
+            .map((r, idx) => ({
+              id: 'item-' + idx,
+              title: r.Title.trim(),
+              folder: (r['Folder Name'] || 'Root').trim(),
+              type: (r['File Type'] || 'Other').trim(),
+              link: r['Direct Link'].trim(),
+              year: extractYear(r.Title)
+            }));
+          populateFilters();
+          updateStats();
+          currentPage = 1;
+          render();
+        }
+      });
+    }
+
+    function updateStats() {
+      const audioCount = archiveData.filter(i => i.type === 'Audio').length;
+      const videoCount = archiveData.filter(i => i.type === 'Video').length;
+      const imageCount = archiveData.filter(i => i.type === 'Image').length;
+      const docCount = archiveData.filter(i => i.type === 'Document').length;
+      const sheetCount = archiveData.filter(i => i.type === 'Spreadsheet').length;
+      const otherCount = archiveData.length - (audioCount + videoCount + imageCount + docCount + sheetCount);
+
+      const folders = new Set(archiveData.map(i => i.folder));
+      document.getElementById('statTotal').textContent = archiveData.length.toLocaleString();
+      document.getElementById('statAudio').textContent = audioCount.toLocaleString();
+      document.getElementById('statImages').textContent = imageCount.toLocaleString();
+      document.getElementById('statFolders').textContent = folders.size.toLocaleString();
+
+      document.getElementById('pillCountAll').textContent = '(' + archiveData.length.toLocaleString() + ')';
+      document.getElementById('pillCountAudio').textContent = '(' + audioCount.toLocaleString() + ')';
+      document.getElementById('pillCountImage').textContent = '(' + imageCount.toLocaleString() + ')';
+      document.getElementById('pillCountOther').textContent = '(' + otherCount.toLocaleString() + ')';
+      document.getElementById('pillCountVideo').textContent = '(' + videoCount.toLocaleString() + ')';
+      document.getElementById('pillCountDocument').textContent = '(' + docCount.toLocaleString() + ')';
+      document.getElementById('pillCountSpreadsheet').textContent = '(' + sheetCount.toLocaleString() + ')';
+    }
+
+    function populateFilters() {
+      const folderSelect = document.getElementById('folderSelect');
+      const yearSelect = document.getElementById('yearSelect');
+      
+      const folderCounts = {};
+      archiveData.forEach(i => {
+        folderCounts[i.folder] = (folderCounts[i.folder] || 0) + 1;
+      });
+
+      const folders = Object.keys(folderCounts).sort((a, b) => a.localeCompare(b));
+      folderSelect.innerHTML = '<option value="">All Collections (' + archiveData.length.toLocaleString() + ')</option>';
+      folders.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f;
+        opt.textContent = f + ' (' + folderCounts[f] + ')';
+        folderSelect.appendChild(opt);
+      });
+
+      const yearCounts = {};
+      archiveData.forEach(i => {
+        if (i.year) yearCounts[i.year] = (yearCounts[i.year] || 0) + 1;
+      });
+      const years = Object.keys(yearCounts).sort((a, b) => Number(b) - Number(a));
+      yearSelect.innerHTML = '<option value="">All Years</option>';
+      years.forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y + ' (' + yearCounts[y] + ')';
+        yearSelect.appendChild(opt);
+      });
+    }
+
+    function getFiltered() {
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const folder = document.getElementById('folderSelect').value;
+      const year = document.getElementById('yearSelect').value;
+
+      return archiveData.filter(item => {
+        if (currentType) {
+          const it = item.type.toLowerCase();
+          const ct = currentType.toLowerCase();
+          if (ct === 'other') {
+            if (['audio', 'video', 'image', 'document', 'spreadsheet'].includes(it)) return false;
+          } else if (it !== ct) {
+            return false;
+          }
+        }
+        if (folder && item.folder !== folder) return false;
+        if (year && item.year !== year) return false;
+        if (search) {
+          const matchTitle = item.title.toLowerCase().includes(search);
+          const matchFolder = item.folder.toLowerCase().includes(search);
+          if (!matchTitle && !matchFolder) return false;
+        }
+        return true;
+      });
+    }
+
+    function render() {
+      const filtered = getFiltered();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      const startIdx = filtered.length === 0 ? 0 : (currentPage - 1) * pageSize;
+      const endIdx = Math.min(startIdx + pageSize, filtered.length);
+      const pageItems = filtered.slice(startIdx, endIdx);
+
+      const displayStart = filtered.length === 0 ? 0 : startIdx + 1;
+      document.getElementById('resultsCount').innerHTML = 
+        `Showing <strong style="color: #FFF;">${displayStart.toLocaleString()}–${endIdx.toLocaleString()}</strong> of <strong style="color: var(--accent);">${filtered.length.toLocaleString()}</strong> records ${filtered.length !== archiveData.length ? '(filtered)' : ''}`;
+
+      const gridView = document.getElementById('gridView');
+      const tableBody = document.getElementById('tableBody');
+      const paginationBottom = document.getElementById('paginationBottom');
+
+      if (filtered.length === 0) {
+        const emptyHtml = '<div class="empty-state">No matching grime files found in the 12,603 catalog. Try adjusting your search query.</div>';
+        gridView.innerHTML = emptyHtml;
+        tableBody.innerHTML = `<tr><td colspan="4" class="empty-state">No matching records found.</td></tr>`;
+        paginationBottom.style.display = 'none';
+        return;
+      }
+
+      paginationBottom.style.display = 'flex';
+      renderPaginationControls(totalPages, filtered.length);
+
+      // Render Grid
+      gridView.innerHTML = pageItems.map(item => `
+        <div class="archive-card">
+          <div>
+            <div class="card-top">
+              <span class="card-folder">${escapeHtml(item.folder)}</span>
+              <span class="card-badge">${escapeHtml(item.type)}${item.year ? ' • ' + item.year : ''}</span>
+            </div>
+            <div class="card-title">${escapeHtml(item.title)}</div>
+          </div>
+          <div class="card-actions">
+            <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="card-link">
+              <span>Open in Drive</span>
+              <span>↗</span>
+            </a>
+            <button class="copy-btn" onclick="copyLink('${item.link}')" title="Copy Google Drive Link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      // Render Table
+      tableBody.innerHTML = pageItems.map(item => `
+        <tr>
+          <td class="table-title">${escapeHtml(item.title)}</td>
+          <td>${escapeHtml(item.folder)}</td>
+          <td><span class="card-badge">${escapeHtml(item.type)}</span></td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="table-link">Open Drive ↗</a>
+              <button class="copy-btn" onclick="copyLink('${item.link}')" title="Copy link" style="padding: 0.25rem 0.5rem;">Copy</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderPaginationControls(totalPages, totalItems) {
+      document.getElementById('paginationInfo').innerHTML = `Page <strong style="color: #FFF;">${currentPage}</strong> of <strong style="color: #FFF;">${totalPages}</strong>`;
+      document.getElementById('jumpPageInput').max = totalPages;
+      document.getElementById('jumpPageInput').value = currentPage;
+
+      const container = document.getElementById('pageButtonsContainer');
+      container.innerHTML = '';
+
+      const btnFirst = document.createElement('button');
+      btnFirst.className = 'pagination-btn';
+      btnFirst.textContent = '«';
+      btnFirst.title = 'First page';
+      btnFirst.disabled = currentPage === 1;
+      btnFirst.onclick = () => { currentPage = 1; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+      container.appendChild(btnFirst);
+
+      const btnPrev = document.createElement('button');
+      btnPrev.className = 'pagination-btn';
+      btnPrev.textContent = '‹';
+      btnPrev.title = 'Previous page';
+      btnPrev.disabled = currentPage === 1;
+      btnPrev.onclick = () => { currentPage--; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+      container.appendChild(btnPrev);
+
+      // Smart page numbers
+      const pages = [];
+      if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        if (currentPage > 3) pages.push('...');
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        for (let i = start; i <= end; i++) pages.push(i);
+        if (currentPage < totalPages - 2) pages.push('...');
+        pages.push(totalPages);
+      }
+
+      pages.forEach(p => {
+        if (p === '...') {
+          const span = document.createElement('span');
+          span.textContent = '...';
+          span.style.padding = '0 0.25rem';
+          container.appendChild(span);
+        } else {
+          const btn = document.createElement('button');
+          btn.className = 'pagination-btn' + (p === currentPage ? ' active' : '');
+          btn.textContent = p;
+          btn.onclick = () => { currentPage = p; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+          container.appendChild(btn);
+        }
+      });
+
+      const btnNext = document.createElement('button');
+      btnNext.className = 'pagination-btn';
+      btnNext.textContent = '›';
+      btnNext.title = 'Next page';
+      btnNext.disabled = currentPage === totalPages;
+      btnNext.onclick = () => { currentPage++; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+      container.appendChild(btnNext);
+
+      const btnLast = document.createElement('button');
+      btnLast.className = 'pagination-btn';
+      btnLast.textContent = '»';
+      btnLast.title = 'Last page';
+      btnLast.disabled = currentPage === totalPages;
+      btnLast.onclick = () => { currentPage = totalPages; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+      container.appendChild(btnLast);
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function copyLink(url) {
+      navigator.clipboard?.writeText(url);
+      const toast = document.getElementById('toast');
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2200);
+    }
+
+    // Event listeners
+    let debounceTimer;
+    document.getElementById('searchInput').addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        currentPage = 1;
+        render();
+      }, 150);
+    });
+
+    document.getElementById('folderSelect').addEventListener('change', () => {
+      currentPage = 1;
+      render();
+    });
+
+    document.getElementById('yearSelect').addEventListener('change', () => {
+      currentPage = 1;
+      render();
+    });
+
+    document.getElementById('pageSizeSelect').addEventListener('change', (e) => {
+      pageSize = parseInt(e.target.value, 10) || 60;
+      currentPage = 1;
+      render();
+    });
+
+    document.getElementById('btnJumpPage').addEventListener('click', () => {
+      const p = parseInt(document.getElementById('jumpPageInput').value, 10);
+      if (!isNaN(p)) {
+        currentPage = p;
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    document.getElementById('typePills').addEventListener('click', (e) => {
+      const pill = e.target.closest('.pill');
+      if (pill) {
+        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        currentType = pill.getAttribute('data-type');
+        currentPage = 1;
+        render();
+      }
+    });
+
+    document.getElementById('btnViewGrid').addEventListener('click', () => {
+      document.getElementById('btnViewGrid').classList.add('active');
+      document.getElementById('btnViewTable').classList.remove('active');
+      document.getElementById('gridView').style.display = 'grid';
+      document.getElementById('tableView').style.display = 'none';
+    });
+
+    document.getElementById('btnViewTable').addEventListener('click', () => {
+      document.getElementById('btnViewTable').classList.add('active');
+      document.getElementById('btnViewGrid').classList.remove('active');
+      document.getElementById('gridView').style.display = 'none';
+      document.getElementById('tableView').style.display = 'block';
+    });
+
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => parseCSV(evt.target.result);
+        reader.readAsText(file);
+      }
+    });
+
+    document.getElementById('btnExport').addEventListener('click', () => {
+      const items = getFiltered();
+      const csv = Papa.unparse(items.map(i => ({
+        'Title': i.title,
+        'Folder Name': i.folder,
+        'File Type': i.type,
+        'Direct Link': i.link
+      })));
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'my_grime_archive_12603_export.csv';
+      a.click();
+    });
+
+    // Run on startup
+    loadInitialData();
+  </script>
+</body>
+</html>

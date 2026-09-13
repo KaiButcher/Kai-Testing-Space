@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { KaiSpaceSquare } from './components/KaiSpaceSquare';
 import { PhotographyBento } from './components/PhotographyBento';
 import { GraphicDesignBento } from './components/GraphicDesignBento';
-import { PlaygroundBento } from './components/AnimationBento';
+import { PlaygroundBento } from './components/PlaygroundBento';
 import { ArchiveBento } from './components/ArchiveBento';
 import { BentoModalWrapper } from './components/subpages/BentoModalWrapper';
 import { BentoPageId } from './types';
@@ -11,7 +11,7 @@ export default function App() {
   const [activeBento, setActiveBento] = useState<BentoPageId | null>(null);
 
   return (
-    <div className="w-full min-h-screen bg-[#0d0e11] text-white selection:bg-white selection:text-black p-2 sm:p-3 md:p-4 lg:p-5 flex flex-col justify-center items-center relative">
+    <div className="w-full min-h-screen bg-[#070707] text-white selection:bg-white selection:text-black p-2 sm:p-3 md:p-4 lg:p-5 flex flex-col justify-center items-center relative">
       {/* 
         3x3 Frame-filling Bento Grid for Desktop and iPad:
         - 1px crisp white hairline division stroke with zero padding between cells

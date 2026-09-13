@@ -5,7 +5,8 @@ import { BentoPageId } from '../../types';
 import { KaiSpaceSubpage } from './KaiSpaceSubpage';
 import { PhotographySubpage } from './PhotographySubpage';
 import { GraphicDesignSubpage } from './GraphicDesignSubpage';
-import { AnimationSubpage as PlaygroundSubpage } from './AnimationSubpage';
+import { PlaygroundSubpage } from './PlaygroundSubpage';
+import { PhotographyIISubpage } from './PhotographyIISubpage';
 import { ArchiveSubpage } from './ArchiveSubpage';
 
 interface BentoModalWrapperProps {
@@ -60,7 +61,7 @@ export const BentoModalWrapper: React.FC<BentoModalWrapperProps> = ({
             damping: 32,
             mass: 0.8,
           }}
-          className="fixed inset-0 z-50 bg-[#121316] text-white overflow-y-auto overscroll-contain select-text"
+          className="fixed inset-0 z-50 bg-[#070707] text-white overflow-y-auto overscroll-contain select-text"
           id={`expanded-subpage-${activeBento}`}
         >
           {/* Subtle noise and background grid */}
@@ -94,6 +95,7 @@ export const BentoModalWrapper: React.FC<BentoModalWrapperProps> = ({
             {activeBento === 'photo' && <PhotographySubpage />}
             {activeBento === 'design' && <GraphicDesignSubpage />}
             {(activeBento === 'playground' || activeBento === 'anim') && <PlaygroundSubpage />}
+            {activeBento === 'photo2' && <PhotographyIISubpage />}
             {activeBento === 'archive' && <ArchiveSubpage />}
           </motion.div>
         </motion.div>

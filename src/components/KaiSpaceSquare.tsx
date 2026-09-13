@@ -12,7 +12,7 @@ export const KaiSpaceSquare: React.FC<KaiSpaceSquareProps> = ({ onExpand }) => {
       layoutId="bento-card-space"
       id="bento-kais-space"
       onClick={onExpand}
-      className="bento-grey bento-area-space relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden select-none h-full min-h-[220px] sm:min-h-0 group cursor-pointer hover:bg-[#181a20] transition-colors"
+      className="bento-grey bento-area-space relative p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden select-none h-full min-h-[220px] sm:min-h-0 group cursor-pointer hover:bg-white/[0.02] transition-colors"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -23,7 +23,7 @@ export const KaiSpaceSquare: React.FC<KaiSpaceSquareProps> = ({ onExpand }) => {
       }}
       aria-label="Kai's Space - Click to expand subpage"
     >
-      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-30" />
+      <div className="absolute inset-0 bg-matte-noise pointer-events-none opacity-20" />
 
       {/* Top Header Row */}
       <div className="relative z-10 flex items-center justify-between w-full">
@@ -35,10 +35,10 @@ export const KaiSpaceSquare: React.FC<KaiSpaceSquareProps> = ({ onExpand }) => {
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/80 border border-white/20 tracking-wider">
+          <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/80 tracking-wider">
             INDEX
           </span>
-          <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center text-white/60 group-hover:text-white group-hover:border-white/50 group-hover:scale-110 transition-all">
+          <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-white/60 group-hover:text-white group-hover:bg-white/15 group-hover:scale-110 transition-all">
             <Maximize2 className="w-3 h-3" />
           </div>
         </div>
@@ -55,7 +55,7 @@ export const KaiSpaceSquare: React.FC<KaiSpaceSquareProps> = ({ onExpand }) => {
       </div>
 
       {/* Bottom Coordinates Meta */}
-      <div className="relative z-10 pt-3 border-t border-white/15 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-white/60">
+      <div className="relative z-10 pt-3 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-white/60">
         <span className="tracking-widest">LONDON &bull; UTC+1</span>
         <span className="tracking-widest text-white/80 group-hover:underline flex items-center space-x-1">
           <span>EXPAND</span>
