@@ -10,7 +10,6 @@ import {
   FileText, 
   Image as ImageIcon, 
   Folder, 
-  Download, 
   LayoutGrid, 
   List, 
   Radio, 
@@ -185,19 +184,6 @@ export const GrimeArchiveView: React.FC = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleExportCSV = () => {
-    const header = 'Title,Folder Name,File Type,Direct Link\n';
-    const rows = filteredItems.map(i => 
-      `"${i.title.replace(/"/g, '""')}","${i.folder.replace(/"/g, '""')}","${i.type}","${i.link}"`
-    ).join('\n');
-    const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `my_grime_archive_${selectedFolder !== 'ALL' ? selectedFolder : '12603_records'}.csv`;
-    a.click();
-  };
-
   const getTypeIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case 'audio': return <Music className="w-3.5 h-3.5 text-amber-400" />;
@@ -257,14 +243,6 @@ export const GrimeArchiveView: React.FC = () => {
             <span>Open Standalone Web App</span>
             <ArrowUpRight className="w-4 h-4" />
           </a>
-          <button
-            onClick={handleExportCSV}
-            className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 font-mono text-xs transition-colors"
-            title="Download CSV export"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Export CSV ({filteredItems.length.toLocaleString()})</span>
-          </button>
         </div>
       </div>
 
